@@ -1,0 +1,691 @@
+main-header {
+    position: relative;
+    width: 100%;
+    z-index: 1000;
+    background-color: #001f3f; /* Updated to Navy Blue */
+    color: white;
+    top: 0;
+    transition: all 0.3s ease;
+}
+
+/* Make the header sticky */
+.sticky-header {
+    position: -webkit-sticky; /* Safari */
+    position: sticky;
+    top: 0; /* It will stick when scrolled to the top */
+    z-index: 1000;
+    background-color: #001f3f; /* Updated to Navy Blue */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Additional styles to smooth the transition */
+.sticky-header + .content {
+    padding-top: 60px; /* Adjust based on your header height */
+}
+
+/* Mobile specific styling */
+@media (max-width: 768px) {
+    #main-header {
+        position: static;
+    }
+}
+
+/* Loader Styling */
+#loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background-color: #D3D3D3; /* Updated to Light Gray */
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+}
+
+.loader {
+    --path: #001f3f; /* Navy Blue */
+    --dot: #FFD700; /* Gold */
+    --duration: 2s;
+    width: 44px;
+    height: 44px;
+    position: relative;
+}
+
+.loader:before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    position: absolute;
+    display: block;
+    background: var(--dot);
+    top: 37px;
+    left: 19px;
+    transform: translate(-18px, -18px);
+    animation: dotRect var(--duration) cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
+}
+
+.loader svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.loader svg circle {
+    fill: none;
+    stroke: var(--path);
+    stroke-width: 10px;
+    stroke-dasharray: 150 50 150 50;
+    stroke-dashoffset: 75;
+    animation: pathCircle var(--duration) cubic-bezier(0.785, 0.135, 0.15, 0.86) infinite;
+}
+
+@keyframes pathCircle {
+    25% {
+        stroke-dashoffset: 125;
+    }
+
+    50% {
+        stroke-dashoffset: 175;
+    }
+
+    75% {
+        stroke-dashoffset: 225;
+    }
+
+    100% {
+        stroke-dashoffset: 275;
+    }
+}
+
+@keyframes dotRect {
+    25% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(18px, -18px);
+    }
+
+    75% {
+        transform: translate(0, -36px);
+    }
+
+    100% {
+        transform: translate(-18px, -18px);
+    }
+}
+
+/* Hiding content initially */
+#content {
+    display: none;
+}
+
+/* Add styling improvements */
+.top-menu a {
+    background-color: transparent;
+    color: white;
+    font-size: 10px; /* Increase font size slightly */
+    font-family: 'Poppins', sans-serif; /* Add modern font */
+    text-transform: uppercase; /* Make text uppercase for a cleaner look */
+    text-decoration: none;
+}
+
+.logo-desktop {
+    display: block;
+}
+
+.logo-mobile {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .logo-desktop {
+        display: none;
+    }
+
+    .logo-mobile {
+        display: block;
+        margin: 0 auto;
+    }
+}
+
+/* Main layout adjustments */
+.nav-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+}
+
+.nav-item {
+    margin: 0 8px;
+}
+
+.value {
+    background-color: transparent;
+    border: none;
+    padding: 6px;
+    color: white;
+    display: flex;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 12px; /* Increase font size slightly */
+    font-family: 'Poppins', sans-serif; /* Add modern font */
+    font-weight: 500; /* Medium weight for better readability */
+    letter-spacing: 0.5px; /* Add slight spacing */
+    text-transform: uppercase; /* Make text uppercase for a cleaner look */
+}
+
+.value:hover {
+    background-color: #001f3f; /* Navy Blue */
+}
+
+.value:active {
+    background-color: #FFD700; /* Gold */
+    color: #001f3f; /* Navy Blue */
+}
+
+/* Chatbot Image Styling */
+.chat {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    cursor: pointer;
+    width: 100px;
+    height: 100px;
+}
+
+.chat img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+/* Back to Top Image Styling */
+.button {
+    position: fixed;
+    bottom: 30px;
+    left: 30px;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+}
+
+.button img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+/* Smooth Scroll Animation */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Show/Hide Back to Top Based on Scroll */
+.button {
+    display: none;
+}
+
+.button.show {
+    display: block;
+}
+
+    .btn-custom:hover {
+        background-color: #D3D3D3; /* Light Gray on hover */
+        color: #001f3f; /* Navy Blue text on hover */
+    }
+
+    .scroll-container::-webkit-scrollbar {
+        height: 10px;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+        background: #001f3f; /* Navy Blue */
+        border-radius: 10px;
+    }
+
+    .scroll-container::-webkit-scrollbar-track {
+        background: #D3D3D3; /* Light Gray */
+    }
+
+    .product-card:hover,
+    .job-card:hover,
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+.btn {
+    background: #FFD700; /* Button in Gold */
+    color: #ffffff; /* Navy Blue */
+    border-radius: 25px;
+    padding: 0.5rem 1.5rem;
+    transition: background 0.3s ease-in-out;
+    font-weight: bold;
+}
+
+.btn:hover {
+    background: #001f3f; /* Change to Navy Blue on hover */
+    color: dimgray;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+/* Icon Styling */
+.card-icon {
+    font-size: 3rem;
+    color: #FFD700; /* Gold */
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease-in-out;
+}
+
+.card:hover .card-icon {
+    transform: scale(1.1);
+}
+
+/* Section Styling */
+.about-section {
+
+    padding: 4rem 0;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Section Title */
+.section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #001f3f; /* Navy Blue */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+.section-title::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background-color: #FFD700; /* Gold */
+    margin: 1rem auto 0;
+    border-radius: 2px;
+}
+
+/* About Content */
+.about-content {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1rem;
+    color: #666;
+}
+
+.campus-img {
+    transition: transform 0.3s ease-in-out;
+    border: 2px solid #FFD700; /* Gold Border */
+    border-radius: 10px;
+}
+
+.campus-img:hover {
+    transform: scale(1.05); /* Zoom effect on hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.feature-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    .section-title {
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700;
+    }
+
+    .about-content p {
+        font-family: 'Lato', sans-serif;
+        font-size: 1rem;
+        color: #555;
+    }
+
+    .feature-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+    }
+
+    .feature-icon {
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .feature-box:hover .feature-icon {
+        transform: scale(1.1);
+    }
+/* Modal header styling */
+.modal-header {
+    background-color: #001f3f; /* Navy Blue */
+    color: white;
+}
+
+/* Text styling for the modal */
+.a4-message-text {
+    text-align: left;
+    line-height: 1.6;
+    font-size: 1rem;
+    padding: 20px;
+    color: #555;
+}
+
+/* General styling */
+.modal-footer {
+    justify-content: center;
+}
+
+.btn-secondary {
+    background-color: #FFD700; /* Gold */
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #001f3f; /* Navy Blue */
+}
+
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 100%;
+    }
+}
+
+/* Noticeboard Styling */
+.noticeboard-content {
+    padding: 1rem;
+    height: 300px;
+    overflow: hidden;
+    position: relative;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Notice List Styling */
+.notice-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    font-size: 1rem;
+}
+
+.notice-list li {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #ffffff;
+    border-radius: 5px;
+    font-weight: normal;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.notice-list li:hover {
+    background-color: #f0f0f0;
+    font-weight: bold; /* Bold on hover */
+}
+
+/* Auto-Scrolling Animation */
+@keyframes scroll-notices {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+#scrolling-notices {
+    display: block;
+    animation: scroll-notices 20s linear infinite; /* Smooth scrolling */
+}
+
+/* Pause scrolling on hover */
+#noticeboard-content:hover #scrolling-notices {
+    animation-play-state: paused; /* Stop scrolling on hover */
+}
+
+   .footer-link:hover {
+        text-decoration: underline;
+        color: #d40000;
+    }
+
+    .modal-header, .modal-footer {
+        border: none;
+    }
+
+    .accordion-button:not(.collapsed) {
+        background-color: #D3D3D3;
+        color: #001f3f;
+    }
+
+    .accordion-item {
+        border: none;
+    }
+
+    .btn-close {
+        color: #ffffff !important;
+    }
+
+    hr {
+        border-color: rgba(0, 0, 0, 0.2);
+    }
+
+.message-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.btn-custom-buy:hover,
+    .btn-custom-apply:hover,
+    .btn-custom-service:hover {
+        background-color: #d40000; /* Change to Red on hover for more impact */
+        color: #ffffff;
+    }
+
+    .scroll-container::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .scroll-container::-webkit-scrollbar-thumb {
+        background: #001f3f; /* Navy Blue */
+        border-radius: 10px;
+    }
+
+    .scroll-container::-webkit-scrollbar-track {
+        background: #f0f4ff; /* Light Blue */
+    }
+
+    .product-card:hover,
+    .job-card:hover,
+    .service-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .card-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.2rem;
+    }
+
+    .card-text, .card-info, .card-requirements, .card-price {
+        font-family: 'Lato', sans-serif;
+        font-size: 0.9rem;
+    }
+
+#chat-window {
+    display: none; /* Initially hide the chat window */
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 300px;
+    max-height: 400px;
+    background: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.chat-header {
+    background: #001f3f; /* Navy blue header */
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 15px 15px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close-chat-btn {
+    background: transparent;
+    border: none;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.chat-body {
+    padding: 10px;
+    overflow-y: auto;
+    max-height: 300px;
+}
+
+.chat-input-area {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #ccc;
+}
+
+#chat-input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.send-btn {
+    background: #001f3f; /* Navy Blue */
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.send-btn:hover {
+    background: #FFD700; /* Gold when hovered */
+    color: #001f3f;
+}
+
+    .scroll-container::-webkit-scrollbar {
+        display: none;
+    }
+
+    .scroll-container {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    /* Hover effect */
+    .product-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 20px rgba(0, 31, 63, 0.2);
+    }
+
+    /* Button hover effects */
+    .scroll-left:hover, .scroll-right:hover {
+        background-color: rgba(0, 31, 63, 1);
+    }
+ .section-title { color: #001f3f; font-family: 'Poppins', sans-serif; font-weight: 700; }
+    .scroll-wrapper { position: relative; }
+    .scroll-container { overflow-x: hidden; gap: 30px; padding: 20px; display: flex; scroll-behavior: smooth; }
+    .scroll-btn { background-color: rgba(0, 31, 63, 0.8); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; font-size: 18px; transition: background-color 0.3s ease; z-index: 10; }
+    .scroll-left { left: 0; top: 50%; transform: translateY(-50%); }
+    .scroll-right { right: 0; top: 50%; transform: translateY(-50%); }
+    .item-card { min-width: 300px; border: none; border-radius: 15px; transition: transform 0.3s ease-in-out; overflow: hidden; background: linear-gradient(135deg, #ffffff, #f0f4ff); }
+    .item-image { height: 200px; object-fit: cover; }
+    .card-title { color: #001f3f; font-weight: bold; }
+    .card-text, .card-info, .card-duration { color: #555; }
+    .card-price, .card-info, .card-duration { font-weight: bold; color: #001f3f; }
+    .btn-custom-buy, .btn-custom-apply, .btn-custom-service { background-color: #001f3f; color: #ffffff; padding: 10px 20px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease-in-out; }
+
+@keyframes scrollLeftToRight {
+    0% {
+        transform: translateX(100%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.message-box {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.message-box img {
+    margin-bottom: 10px;
+}
+
+.message-rotator .message-box:first-child {
+    opacity: 1;
+}
+
+
+.notification-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.notification-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.notification-header {
+    border-bottom: 2px solid #ffffff;
+    text-transform: uppercase;
+    font-size: 1rem;
+    letter-spacing: 1px;
+}
+
+.notification-content ul {
+    animation: scrollUp 10s linear infinite;
+    padding-left: 0;
+    margin: 0;
+}
+
+.notification-content ul:hover {
+    animation-play-state: paused;
+}
+
+@keyframes scrollUp {
+    0% {
+        transform: translateY(0);
+    }
+    100% {
+        transform: translateY(-100%);
+    }
+}
+
+.notification-list li {
+    line-height: 1.5rem;
+}

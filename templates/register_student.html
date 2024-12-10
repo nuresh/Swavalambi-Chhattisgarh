@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+
+<div class="container d-flex justify-content-center align-items-center min-vh-100 m-3">
+    <div class="row w-100 justify-content-center">
+      <div class="col-md-9 col-lg-10">
+        <div class="card shadow-lg">
+          <div class="card-body p-4 p-lg-5 text-black">
+            <form method="POST">
+                {% csrf_token %} 
+              <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Register as Student</h5>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="name" id="name" class="form-control form-control-lg" placeholder="Name" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="cname" id="cname" class="form-control form-control-lg" placeholder="Course Name" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="bname" id="bname" class="form-control form-control-lg" placeholder="Branch Name" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="number" name="semester" id="semester" class="form-control form-control-lg" placeholder="Semester" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="enumber" id="enumber" class="form-control form-control-lg" placeholder="Enrollment Number" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="rnumber" id="rnumber" class="form-control form-control-lg" placeholder="Roll Number" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="gender" id="gender" class="form-control form-control-lg" placeholder="Gender" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="date" name="dob" id="dob" class="form-control form-control-lg" placeholder="Date of Birth" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="number" name="syear" id="syear" class="form-control form-control-lg" placeholder="Course Starting Year" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="number" name="eyear" id="eyear" class="form-control form-control-lg" placeholder="Course Ending Year" required />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="ptagline" id="ptagline" class="form-control form-control-lg" placeholder="Profile Tagline" />
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="psummary" id="psummary" class="form-control form-control-lg" placeholder="Profile Summary"/>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="number" name="experience" id="experience" class="form-control form-control-lg" placeholder="Experience" required/>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="skills" id="skills" class="form-control form-control-lg" placeholder="Skills" required/>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="resume" id="resume" class="form-control form-control-lg" placeholder="Resume"/>
+                </div>                
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="linkedin" id="linkedin" class="form-control form-control-lg" placeholder="Linkedin" required/>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="github" id="github" class="form-control form-control-lg" placeholder="Github" required/>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="text" name="website" id="website" class="form-control form-control-lg" placeholder="Website" required/>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="email" name="email" id="email" class="form-control form-control-lg" placeholder="Email" required/>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="number" name="mobile" id="mobile" class="form-control form-control-lg" placeholder="Phone Number" required/>
+                </div>
+
+                <div class="form-outline mb-4">
+                    <input type="password" name="password" id="password" class="form-control form-control-lg" placeholder="Password" required/>
+                </div>
+
+              <div class="pt-1 mb-4">
+                <button class="btn btn-lg btn-block" type="submit" style="background-color: #001f3f; border-color: #001f3f; color: white;">Login</button>
+              </div>
+
+              <p class="pb-lg-2" style="color: #393f81;">Have already an account? <a href="{% url 'login' %}" style="color: #393f81;">Login here</a></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+{% endblock %}

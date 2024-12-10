@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pt-1 mb-4">
+    <!-- Make sure logout is a link pointing to the logout URL -->
+    <a href="{% url 'logout' %}">
+        <button class="btn btn-lg btn-block" type="button" style="background-color: #001f3f; border-color: #001f3f; color: white;">Logout</button>
+    </a>
+</div>
+
+<h2>Student Dashboard</h2> 
+<p>Welcome, {{ student.user.email }}</p>
+<p>Name: {{ student.name }}</p>
+<p>Course: {{ student.course_name }}</p>
+<p>Branch: {{ student.course_name }}</p>
+<p>Semster: {{ student.course_name }}</p>
+<p>Enrollment Number: {{ student.course_name }}</p>
+<p>Roll Number: {{ student.course_name }}</p>
+<p>Gender: {{ student.course_name }}</p>
+<p>Date of Birth: {{ student.course_name }}</p>
+<p>Course Starting Year: {{ student.course_name }}</p>
+<p>Course Ending Year: {{ student.course_name }}</p>
+<p>Profile Tagline: {{ student.course_name }}</p>
+<p>Profile Summary: {{ student.course_name }}</p>
+<p>Experience: {{ student.course_name }}</p>
+<p>Skills: {{ student.course_name }}</p>
+<p>Resume: {{ student.course_name }}</p>
+<p>Linkedin: {{ student.course_name }}</p>
+<p>Github: {{ student.course_name }}</p>
+<p>Website: {{ student.course_name }}</p>
+<p>Mobile Number: {{ student.course_name }}</p>
+
+{% endblock %}
+

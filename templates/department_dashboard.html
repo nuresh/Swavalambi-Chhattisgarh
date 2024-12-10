@@ -1,0 +1,20 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="pt-1 mb-4">
+    <!-- Make sure logout is a link pointing to the logout URL -->
+    <a href="{% url 'logout' %}">
+        <button class="btn btn-lg btn-block" type="button" style="background-color: #001f3f; border-color: #001f3f; color: white;">Logout</button>
+    </a>
+</div>
+
+<h2>Department Dashboard</h2> 
+<p>Welcome, {{ department.user.email }}</p>
+<p>Name: {{ department.department_name }}</p>
+<p>Head of the Department: {{ department.head_of_department }}</p>
+
+
+{% endblock %}
+

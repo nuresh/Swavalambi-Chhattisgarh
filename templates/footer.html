@@ -1,0 +1,204 @@
+{% load static %}
+
+<!-- Footer -->
+<footer id="contact" class="py-5" style="background: linear-gradient(135deg, #D3D3D3, #f0f4ff); position: relative;">
+    <div class="container">
+        <div class="row">
+            <!-- Logo and Address Section (1/2) -->
+            <div class="col-md-6 mb-4 mb-md-0 d-flex">
+                <!-- Larger Logo -->
+                <div class="me-3">
+                    <img src="{% static 'img/logoggv.png' %}" alt="GGV Logo" style="width: 120px; height: auto;">
+                </div>
+                <!-- Address -->
+                <div>
+                    <h4 class="h5 mb-3" style="font-weight: 700; letter-spacing: 0.5px; color: #001f3f;">Contact Us</h4>
+                    <address class="mb-0" style="line-height: 1.8; font-family: 'Roboto', sans-serif; color: #333;">
+                        Guru Ghasidas Vishwavidyalaya<br>
+                        Koni, Bilaspur, Chhattisgarh 495009<br>
+                        <strong>Phone:</strong> (07752) 260017<br>
+                        <strong>Email:</strong> info@ggu.ac.in
+                    </address>
+                </div>
+            </div>
+
+            <!-- Quick Links Section (1/4) -->
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h4 class="h5 mb-3" style="font-weight: 700; letter-spacing: 0.5px; color: #001f3f;">Quick Links</h4>
+                <ul class="list-unstyled" style="font-family: 'Roboto', sans-serif;">
+                    <li class="mb-2"><a href="#" class="footer-link" style="text-decoration: none; color: #001f3f;">About Us</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link" style="text-decoration: none; color: #001f3f;">Admissions</a></li>
+                    <li class="mb-2"><a href="#" class="footer-link" style="text-decoration: none; color: #001f3f;">Student Resources</a></li>
+                    <li><a href="#" class="footer-link" style="text-decoration: none; color: #001f3f;">FAQ</a></li>
+                </ul>
+            </div>
+
+            <!-- Important Links Section (1/4) -->
+            <div class="col-md-3">
+                <h4 class="h5 mb-3" style="font-weight: 700; letter-spacing: 0.5px; color: #001f3f;">Important Links</h4>
+                <ul class="list-unstyled" style="font-family: 'Roboto', sans-serif;">
+                    <li class="mb-2"><a href="{% url 'register' %}" class="footer-link" style="text-decoration: none; color: #001f3f;">Registration</a></li>
+                    <li class="mb-2"><a href="{% url 'login' %}" class="footer-link" style="text-decoration: none; color: #001f3f;">Login</a></li>
+                    <li class="mb-2"><a href="https://www.ggu.ac.in/" class="footer-link" style="text-decoration: none; color: #001f3f;">GGV Website</a></li>
+                    <li><a href="#" class="footer-link" style="text-decoration: none; color: #001f3f;">GGV Social Links</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Footer bottom line -->
+        <hr class="my-4" style="border-color: rgba(0, 0, 0, 0.1);">
+        <p class="text-center mb-0" style="font-family: 'Roboto', sans-serif; font-size: 14px; color: #333;">&copy; 2024 Guru Ghasidas Vishwavidyalaya, Bilaspur. All rights reserved.</p>
+    </div>
+</footer>
+
+
+
+
+<!-- Back to Top Button (Left side) -->
+<button id="arrowToTop" class="button">
+    <img src="{% static 'img/tb.png' %}" alt="Back to Top"  style="width: 80px; height: 80px;">
+</button>
+</div>
+
+<!-- Modal Structure for Contact Us -->
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #001f3f; color: white;">
+                <h5 class="modal-title" id="contactModalLabel" style="font-family: 'Poppins', sans-serif; font-weight: 600;">Contact Us</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="color: white;"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <!-- Contact Info -->
+                    <div class="col-md-6">
+                        <h6 style="color: #001f3f;">Email Us:</h6>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li style="color: #333;">info@ggv.edu.in</li>
+                            <li style="color: #333;">admissions@ggv.edu.in</li>
+                            <li style="color: #333;">support@ggv.edu.in</li>
+                        </ul>
+                        <h6 style="color: #001f3f;">Call Us:</h6>
+                        <ul style="list-style: none; padding-left: 0;">
+                            <li style="color: #333;">+91-7777-888-999</li>
+                            <li style="color: #333;">+91-7777-555-444</li>
+                            <li style="color: #333;">+91-1234-567-890</li>
+                        </ul>
+                        <h6 style="color: #001f3f;">Address:</h6>
+                        <p style="color: #333;">
+                            Guru Ghasidas Vishwavidyalaya, Koni, Bilaspur, Chhattisgarh, 495009, India
+                        </p>
+                    </div>
+
+                    <!-- Google Map Embed -->
+                    <div class="col-md-6">
+                        <h6 style="color: #001f3f;">Location:</h6>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3738.0244417398167!2d82.13450467510698!3d22.07861858007502!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a28080b11f08385%3A0xd11d2868e51d6b55!2sGuru%20Ghasidas%20Vishwavidyalaya%20(Central%20University)!5e0!3m2!1sen!2sin!4v1696994483123!5m2!1sen!2sin"
+                            width="100%" height="300" style="border: 0;" allowfullscreen="" loading="lazy"></iframe>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="background-color: #001f3f; color: #ffffff;">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+// Script to trigger the Contact Us modal
+document.getElementById('contactLink').addEventListener('click', function(event) {
+    event.preventDefault(); // Prevent the default anchor behavior
+    const contactModal = new bootstrap.Modal(document.getElementById('contactModal')); // Initialize the modal
+    contactModal.show(); // Show the modal
+});
+</script>
+<script>
+    // Scroll container function
+    function scrollContainer(containerSelector, scrollAmount) {
+        const container = document.querySelector(containerSelector);
+        if (container) {
+            container.scrollBy({
+                left: scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    }
+</script>
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+        const scrollContainer = document.querySelector('.scroll-container');
+        const scrollLeftButton = document.querySelector('.scroll-left');
+        const scrollRightButton = document.querySelector('.scroll-right');
+
+        scrollLeftButton.addEventListener('click', () => {
+            scrollContainer.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        scrollRightButton.addEventListener('click', () => {
+            scrollContainer.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+    });
+
+    window.onload = function () {
+        setTimeout(function () {
+            document.getElementById('loader-container').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+        }, 500); // 5 seconds
+    };
+
+    // Show Arrow to Top based on scroll
+    window.onscroll = function () {
+        var arrowToTop = document.getElementById('arrowToTop');
+        if (document.documentElement.scrollTop > 200) {
+            arrowToTop.classList.add('show');
+        } else {
+            arrowToTop.classList.remove('show');
+        }
+    };
+
+    // Scroll to top functionality
+    document.getElementById('arrowToTop').onclick = function () {
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE, and Opera
+        document.body.scrollTop = 0; // For Safari
+    };
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const messageBoxes = document.querySelectorAll(".message-box");
+    let currentMessage = 0;
+
+    function showMessage(index) {
+        // Hide all messages
+        messageBoxes.forEach((box) => {
+            box.style.opacity = "0";
+            box.style.zIndex = "0";
+        });
+
+        // Show the current message
+        const currentBox = messageBoxes[index];
+        currentBox.style.opacity = "1";
+        currentBox.style.zIndex = "1";
+
+        // Schedule the next message
+        currentMessage = (index + 1) % messageBoxes.length;
+        setTimeout(() => showMessage(currentMessage), 2000);
+    }
+
+    // Start the rotation
+    showMessage(currentMessage);
+});
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+
+</body>
+
+</html>
