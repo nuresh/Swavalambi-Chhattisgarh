@@ -2,38 +2,54 @@
 {% load static %}
 {% block content %}
 
-<section id="about" class="py-5 about-section">
-    <div class="container">
-        <div class="row">
-            <!-- Skill Development Feature -->
-            <div class="col-md-4 mb-4">
-                <a href="{% url 'register_student' %}" style="text-decoration: none;">
-                    <div class="text-center feature-box shadow-sm" style="border-radius: 10px; padding: 20px; background: #ffffff; border: 1px solid #e0e0e0;">
-                        <i class="fa fa-graduation-cap feature-icon fa-3x mb-3" style="color: #001f3f;"></i>
-                        <h3 class="h5 feature-title" style="color: #001f3f; font-weight: bold;">Student Registration</h3>
-                    </div>
-                </a>
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+        <h3 class="text-center mb-4">Register</h3>
+        <form method="POST">
+            {% csrf_token %}
+
+            <!-- User Type field -->
+            <div class="mb-3">
+                <label for="user_type" class="form-label">Choose User Type:</label>
+                <select class="form-control" id="user_type" name="user_type" required>
+                    <option value="student">Student</option>
+                    <option value="department">Department</option>
+                    <option value="recruiter">Recruiter</option>
+                </select>
             </div>
-            <!-- Women Empowerment Feature -->
-            <div class="col-md-4 mb-4">
-                <a href="{% url 'register_department' %}" style="text-decoration: none;">
-                    <div class="text-center feature-box shadow-sm" style="border-radius: 10px; padding: 20px; background: #ffffff; border: 1px solid #e0e0e0;">
-                        <i class="fa fa-building feature-icon fa-3x mb-3" style="color: #001f3f;"></i>
-                        <h3 class="h5 feature-title" style="color: #001f3f; font-weight: bold;">Department Registration</h3>
-                    </div>
-                </a>
+
+            <!-- Name field -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
             </div>
-            <!-- Sustainable Agriculture Feature -->
-            <div class="col-md-4 mb-4">
-                <a href="{% url 'register_recruiter' %}" style="text-decoration: none;">
-                    <div class="text-center feature-box shadow-sm" style="border-radius: 10px; padding: 20px; background: #ffffff; border: 1px solid #e0e0e0;">
-                        <i class="fa fa-users fa-3x mb-3" style="color: #001f3f;"></i>
-                        <h3 class="h5 feature-title" style="color: #001f3f; font-weight: bold;">Recruiter Registration</h3>
-                    </div>
-                </a>
+
+            <!-- Email field -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
             </div>
-        </div>
+
+            <!-- Password field -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+
+            <!-- Confirm Password field -->
+            <div class="mb-3">
+                <label for="confirm-password" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+            </div>
+
+            <!-- Submit button -->
+            <button type="submit" class="btn btn-primary w-100">Register</button>
+
+            <!-- Link to login -->
+            <p class="text-center mt-3">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </form>
     </div>
-</section>
+</div>
+
 
 {% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block admincontent %}
+
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+        <div class="container-fluid p-4">
+            <h1 class="mt-4">Welcome to the Admin Dashboard</h1>
+
+            <!-- Profile Page -->
+            <div class="mt-4">
+                <h2>Edit Profile</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    {% comment %} <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" value="{{name}}">
+                    </div> {% endcomment %}
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ email }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </form>
+            </div>
+        </div>
+    
+{% endblock %}

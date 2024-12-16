@@ -3,7 +3,7 @@
 {% block content %}
 
 
-<div class="container d-flex justify-content-center align-items-center min-vh-100">
+<!-- <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="row w-100 justify-content-center">
       <div class="col-md-6 col-lg-5">
         <div class="card shadow-lg">
@@ -29,7 +29,38 @@
         </div>
       </div>
     </div>
-</div>
+</div> -->
 
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
+      <h3 class="text-center mb-4">Login</h3>
+      {% if error %}
+      <div class="alert alert-danger" role="alert">
+          {{ error }}
+      </div>
+      {% endif %}
+      <form method="POST">
+        {% csrf_token %}
+          <!-- Email field -->
+          <div class="mb-3">
+              <label for="email" class="form-label">Email Address</label>
+              <input type="email" name ="email" class="form-control" id="email" placeholder="Enter your email" required>
+          </div>
+
+          <!-- Password field -->
+          <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" name ="password" class="form-control" id="password" placeholder="Enter your password" required>
+          </div>
+
+          <!-- Submit button -->
+          <button type="submit" class="btn btn-primary w-100">Login</button>
+
+          <!-- Link to register -->
+          <p class="text-center mt-3">Don't have an account? <a href="{% url 'register' %}">Register</a></p>
+      </form>
+  </div>
+</div>
 
 {% endblock %}

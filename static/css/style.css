@@ -689,3 +689,20 @@ html {
 .notification-list li {
     line-height: 1.5rem;
 }
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -250px !important; /* Adjust this value based on sidebar width */
+    transition: margin 0.3s ease-in-out;
+}
+
+#sidebar-wrapper {
+    height: 100vh; /* Set full vertical height */
+    overflow-y: auto; /* Add scroll if content overflows */
+}
+.nav-link {
+    transition: background-color 0.3s ease-in-out;
+}
+.nav-link:hover {
+    background-color: #495057; /* Change hover color */
+    color: #ffffff; /* Ensure text remains white */
+}
