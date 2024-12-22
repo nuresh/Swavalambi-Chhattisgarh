@@ -1,6 +1,6 @@
-{% extends 'admin.html' %}
+{% extends 'department.html' %}
 {% load static %}
-{% block admincontent %}
+{% block departmentcontent %}
 
 <!-- Message Block -->
 {% if messages %}
@@ -17,17 +17,21 @@
 {% endif %}
 
         <div class="container-fluid p-4">
-            <h1 class="mt-4">Welcome to the Admin Dashboard</h1>
+            <h1 class="mt-4">Welcome to the Department Dashboard</h1>
 
             <!-- Profile Page -->
             <div class="mt-4">
                 <h2>Edit Profile</h2>
                 <form method="POST">
                     {% csrf_token %}
-                    {% comment %} <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" value="{{name}}">
-                    </div> {% endcomment %}
+                    <div class="mb-3">
+                        <label for="department_name" class="form-label">Department Name</label>
+                        <input type="text" class="form-control" id="department_name" name="department_name" value="{{department_name}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="hod" class="form-label">Head of the Department</label>
+                        <input type="text" class="form-control" id="hod" name="hod" value="{{hod}}">
+                    </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" value="{{ email }}">

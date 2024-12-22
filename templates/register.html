@@ -5,10 +5,13 @@
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
         <h3 class="text-center mb-4">Register</h3>
+
+        {% if step == 'registration' %}
+        <!-- Registration Form -->
         <form method="POST">
             {% csrf_token %}
+            <input type="hidden" name="step" value="registration">
 
-            <!-- User Type field -->
             <div class="mb-3">
                 <label for="user_type" class="form-label">Choose User Type:</label>
                 <select class="form-control" id="user_type" name="user_type" required>
@@ -18,38 +21,45 @@
                 </select>
             </div>
 
-            <!-- Name field -->
             <div class="mb-3">
                 <label for="name" class="form-label">Full Name</label>
                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
             </div>
 
-            <!-- Email field -->
             <div class="mb-3">
                 <label for="email" class="form-label">Email Address</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email" required>
             </div>
 
-            <!-- Password field -->
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
             </div>
 
-            <!-- Confirm Password field -->
             <div class="mb-3">
                 <label for="confirm-password" class="form-label">Confirm Password</label>
                 <input type="password" class="form-control" id="confirm-password" name="confirm_password" placeholder="Confirm your password" required>
             </div>
 
-            <!-- Submit button -->
             <button type="submit" class="btn btn-primary w-100">Register</button>
-
-            <!-- Link to login -->
-            <p class="text-center mt-3">Already have an account? <a href="{% url 'login' %}">Login</a></p>
         </form>
+
+        {% elif step == 'otp_verification' %}
+        <!-- OTP Verification Form -->
+        <form method="POST">
+            {% csrf_token %}
+            <input type="hidden" name="step" value="otp_verification">
+            <input type="hidden" name="email" value="{{ email }}">
+
+            <div class="mb-3">
+                <label for="otp" class="form-label">Enter OTP</label>
+                <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter the OTP sent to your email" required>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
+        </form>
+        {% endif %}
     </div>
 </div>
-
 
 {% endblock %}

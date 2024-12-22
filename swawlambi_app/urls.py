@@ -15,7 +15,10 @@ urlpatterns = [
     path('dashboard/admin/', views.admin_dashboard, name='admin_dashboard'),
     path('profile/admin/', views.admin_profile, name='admin_profile'),
     path('users/admin/', views.admin_users, name='admin_users'),
-    # path('admin/approve/student/<int:student_id>/', views.approve_student, name='approve_student'),
-    # path('admin/approve/department/<int:department_id>/', views.approve_department, name='approve_department'),
-    # path('admin/approve/recruiter/<int:recruiter_id>/', views.approve_recruiter, name='approve_recruiter'),
+    path('products/admin/', views.admin_products, name='admin_products'),
+    path('profile/department/', views.department_profile, name='department_profile'),
+    path('products/department/', views.department_products, name='department_products'),
+    path('edit-products/department/', views.edit_products, name='edit_products'),
+    path('add-products/department/', views.add_products, name='add_products'),
+    path('delete-products/department/', views.delete_products, name='delete_products'),
 ]

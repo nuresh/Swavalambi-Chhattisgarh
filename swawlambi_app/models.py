@@ -57,14 +57,17 @@ class Recruiter(models.Model):
     def __str__(self):
         return self.name
 
-class products(models.Model):
+class Product(models.Model):
     name = models.CharField(max_length=100)
     AutoSlugField(populate_from='name', unique=True,null=True,default=None)
+    department = models.ForeignKey(Department, on_delete=models.PROTECT)
     qty =  models.IntegerField(null=True, blank=True)
     desc = models.CharField(max_length=500,null=True, blank=True)
     price = models.IntegerField(null=True, blank=True)
     image = models.FileField(upload_to="product_image",max_length=250, null=True, default=None,validators=[validate_file_size])
-    enabled = models.BooleanField(null=True)
+    enabled = models.BooleanField(default=True,null=True)
+    is_approved = models.BooleanField(default=False,null=True)
+
 
     def __str__(self):
         return self.name
