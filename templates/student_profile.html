@@ -1,0 +1,117 @@
+{% extends 'student.html' %}
+{% load static %}
+{% block studentcontent %}
+
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+        <div class="container-fluid p-4">
+            <h1 class="mt-4">Welcome to the Student Dashboard</h1>
+
+            <!-- Profile Page -->
+            <div class="mt-4">
+                <h2>Edit Profile</h2>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ name }}" placeholder="Enter your name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="cname" class="form-label">Course Name</label>
+                        <input type="text" class="form-control" id="cname" name="cname" value="{{ course_name }}" placeholder="Enter course name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="bname" class="form-label">Branch Name</label>
+                        <input type="text" class="form-control" id="bname" name="bname" value="{{ branch_name }}" placeholder="Enter branch name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="semester" class="form-label">Semester</label>
+                        <input type="number" class="form-control" id="semester" name="semester" value="{{ semester }}" placeholder="Enter semester">
+                    </div>
+                    <div class="mb-3">
+                        <label for="enumber" class="form-label">Enrollment Number</label>
+                        <input type="text" class="form-control" id="enumber" name="enumber" value="{{ enrollment_number }}" placeholder="Enter enrollment number">
+                    </div>
+                    <div class="mb-3">
+                        <label for="rnumber" class="form-label">Roll Number</label>
+                        <input type="text" class="form-control" id="rnumber" name="rnumber" value="{{ roll_number }}" placeholder="Enter roll number">
+                    </div>
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">Gender</label>
+                        <input type="text" class="form-control" id="gender" name="gender" value="{{ gender }}" placeholder="Enter gender">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dob" class="form-label">Date of Birth</label>
+                        <input type="date" class="form-control" id="dob" name="dob" value="{{ date_of_birth|date:'Y-m-d' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="startYear" class="form-label">Course Starting Year</label>
+                        <input type="number" class="form-control" id="startYear" name="startYear" value="{{ course_starting_year }}" placeholder="Enter course starting year">
+                    </div>
+                    <div class="mb-3">
+                        <label for="endYear" class="form-label">Course Ending Year</label>
+                        <input type="number" class="form-control" id="endYear" name="endYear" value="{{ course_ending_year }}" placeholder="Enter course ending year">
+                    </div>
+                    <div class="mb-3">
+                        <label for="tagline" class="form-label">Profile Tagline</label>
+                        <input type="text" class="form-control" id="tagline" name="tagline" value="{{ profile_tagline }}" placeholder="Enter profile tagline">
+                    </div>
+                    <div class="mb-3">
+                        <label for="summary" class="form-label">Profile Summary</label>
+                        <textarea class="form-control" id="summary" name="summary" rows="3" placeholder="Enter profile summary">{{ profile_summary }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="experience" class="form-label">Experience (Years)</label>
+                        <input type="number" class="form-control" id="experience" name="experience" value="{{ experience }}" placeholder="Enter years of experience">
+                    </div>
+                    <div class="mb-3">
+                        <label for="skills" class="form-label">Skills</label>
+                        <input type="text" class="form-control" id="skills" name="skills" value="{{ skills }}" placeholder="Enter your skills">
+                    </div>
+                    <div class="mb-3">
+                        <label for="resume" class="form-label">Resume Link</label>
+                        <input type="url" class="form-control" id="resume" name="resume" value="{{ resume }}" placeholder="Enter resume link">
+                    </div>
+                    <div class="mb-3">
+                        <label for="linkedin" class="form-label">LinkedIn Profile</label>
+                        <input type="url" class="form-control" id="linkedin" name="linkedin" value="{{ linkedin }}" placeholder="Enter LinkedIn profile link">
+                    </div>
+                    <div class="mb-3">
+                        <label for="github" class="form-label">GitHub Profile</label>
+                        <input type="url" class="form-control" id="github" name="github" value="{{ github }}" placeholder="Enter GitHub profile link">
+                    </div>
+                    <div class="mb-3">
+                        <label for="website" class="form-label">Personal Website</label>
+                        <input type="url" class="form-control" id="website" name="website" value="{{ website }}" placeholder="Enter personal website link">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ phone_number }}" placeholder="Enter phone number">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ email }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Enter new password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </form>
+            </div>
+        </div>
+    
+{% endblock %}

@@ -4,26 +4,14 @@
 
 <div class="d-flex" id="wrapper">
     <!-- Sidebar -->
-    <div class="bg-dark text-white p-3" id="sidebar-wrapper" style="width: 250px;">
-        <h4 class="text-center">Admin Panel</h4>
+    <div class="bg-dark text-white pt-3" id="sidebar-wrapper" style="width: 250px;">
+        <h5 class="ps-4">Student Panel</h5>
         <ul class="nav flex-column">
             <li class="nav-item">
-                <a href="{% url 'admin_dashboard' %}" class="nav-link text-white">Dashboard</a>
+                <a href="{% url 'department_dashboard' %}" class="nav-link text-white">Dashboard</a>
             </li>
             <li class="nav-item">
-                <a href="{% url 'admin_users' %}" class="nav-link text-white">Users</a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'admin_products' %}" class="nav-link text-white">Products</a>
-            </li>
-            <li class="nav-item">
-                <a href="{% url 'admin_services' %}" class="nav-link text-white">Services</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link text-white">Orders</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link text-white">Settings</a>
+                <a href="{% url 'department_products' %}" class="nav-link text-white">Jobs</a>
             </li>
         </ul>
     </div>
@@ -37,7 +25,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'admin_profile' %}">Profile</a>
+                            <a class="nav-link" href="{% url 'student_profile' %}">Profile</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'logout' %}">Logout</a>
@@ -47,7 +35,7 @@
             </div>
         </nav>
 
-       {% block admincontent %}
+       {% block studentcontent %}
 
        {% endblock %}
     </div>

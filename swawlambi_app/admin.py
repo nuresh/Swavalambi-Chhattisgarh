@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student, Department, Recruiter, Product
+from .models import Student, Department, Recruiter, Product, Service
 
 # Register your models here.
 # admin.site.register(ADMIN)
@@ -9,3 +9,4 @@ admin.site.register(Student)
 admin.site.register(Department)
 admin.site.register(Recruiter)
 admin.site.register(Product)
+admin.site.register(Service)

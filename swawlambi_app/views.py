@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Student, Department, Recruiter, Product
+from .models import Student, Department, Recruiter, Product, Service
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
@@ -30,6 +30,11 @@ def register(request):
             password = request.POST['password']
             confirm_password = request.POST['confirm_password']
             name = request.POST['name']
+
+            # Check if email already exists
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "An account with this email already exists.")
+                return render(request, 'register.html')
 
             # Check if passwords match
             if password != confirm_password:
@@ -162,15 +167,15 @@ def admin_profile(request):
 
         # Retrieve data from the POST request
         # name = request.POST.get('name')
-        email = request.POST.get('email')
+        # email = request.POST.get('email')
         password = request.POST.get('password')
 
         # Update admin user details
         # if name:
         #     admin_user.first_name = name
-        if email:
-            admin_user.email = email
-            admin_user.username = email  # Assuming email is also used as the username
+        # if email:
+        #     admin_user.email = email
+        #     admin_user.username = email  # Assuming email is also used as the username
         if password:
             admin_user.set_password(password)
 
@@ -250,7 +255,7 @@ def admin_products(request):
     if not (request.user.is_staff or hasattr(request.user, 'admin')):
         return redirect('login')  # If not an admin, redirect to login
 
-    products = Product.objects.all().order_by('-id')
+    products = Product.objects.filter(is_rejected = False).order_by('-id')
     
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
@@ -262,13 +267,42 @@ def admin_products(request):
             product.is_approved = True
             product.save()
         elif action == 'reject':
-            product.delete()
+            product.is_rejected = True
+            product.save()
         elif action == 'delete':
             product.delete()
 
         return redirect('admin_products')
 
     return render(request, 'admin_products.html', {'products': products})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def admin_services(request):
+    # Check if the user is an admin (either staff user or custom admin model)
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')  # If not an admin, redirect to login
+
+    services = Service.objects.filter(is_rejected = False).order_by('-id')
+    
+    if request.method == 'POST':
+        service_id = request.POST.get('service_id')
+        action = request.POST.get('action')
+        service = get_object_or_404(Service, id=service_id)
+        
+        # Handle actions based on the button clicked
+        if action == 'approve':
+            service.is_approved = True
+            service.save()
+        elif action == 'reject':
+            service.is_rejected = True
+            service.save()
+        elif action == 'delete':
+            service.delete()
+
+        return redirect('admin_services')
+
+    return render(request, 'admin_services.html', {'services': services})
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
@@ -312,13 +346,13 @@ def department_profile(request):
         # Retrieve data from the POST request
         department_name = request.POST.get('department_name')
         hod = request.POST.get('hod')
-        email = request.POST.get('email')
+        # email = request.POST.get('email')
         password = request.POST.get('password')
 
         # Update User model fields
-        if email:
-            admin_user.email = email
-            admin_user.username = email  # Assuming email is also used as the username
+        # if email:
+        #     admin_user.email = email
+        #     admin_user.username = email  # Assuming email is also used as the username
         if password:
             admin_user.set_password(password)
         admin_user.save()
@@ -363,7 +397,7 @@ def department_products(request):
         # If the user is not a department user, redirect to login or show an error
         return redirect('login')  # Or show a message saying "You are not a department"
 
-    products = Product.objects.all().order_by('-id')
+    products = Product.objects.filter(department=department).order_by('-id')
     
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
@@ -429,7 +463,7 @@ def add_products(request):
                 image_path = fs.save(f'product_image/{image.name}', image)
             except Exception as e:
                 messages.error(request, f"Error uploading image: {e}")
-                return render(request, 'add_product.html', {'departments': departments})
+                return render(request, 'add_products.html', {'departments': departments})
 
         
         product = Product(
@@ -486,6 +520,7 @@ def edit_products(request):
                 messages.error(request, f"Error uploading image: {e}")
                 return render(request, 'edit_products.html', {'product': product})
         product.is_approved = False
+        product.is_rejected = False
         product.save()
         messages.success(request, "Product updated successfully!")
         return redirect(f"{reverse('edit_products')}?product_id={product.id}")
@@ -529,17 +564,331 @@ def delete_products(request):
     return render(request, 'department_products.html')
 
 
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def department_services(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
+    try:
+        # Ensure the user is a department user
+        department = Department.objects.get(user=request.user)
+        print(f"Department found: {department.department_name}")
+    except Department.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+    services = Service.objects.filter(department=department).order_by('-id')
+    
+    if request.method == 'POST':
+        service_id = request.POST.get('service_id')
+        action = request.POST.get('action')
+        service = get_object_or_404(Service, id=service_id)
+        
+        # Handle actions based on the button clicked
+        if action == 'approve':
+            service.is_approved = True
+            service.save()
+        elif action == 'reject':
+            service.delete()
+        elif action == 'delete':
+            service.delete()
+
+        return redirect('department_services')
+
+    return render(request, 'department_services.html', {'services': services})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def add_services(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
+    try:
+        # Ensure the user is a department user
+        department = Department.objects.get(user=request.user)
+        print(f"Department found: {department.department_name}")
+    except Department.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+    admin_user = request.user
+    
+    # Fetch or create a Department entry for the current user
+    department, created = Department.objects.get_or_create(user=admin_user)
+    
+    if request.method == 'POST':
+        name = request.POST['name']
+        duration = request.POST.get('duration')
+        desc = request.POST.get('desc')
+        price = request.POST.get('price')
+        enabled = 'enabled' in request.POST  # Checkbox field
+        # image = request.FILES.get('image')
+
+        # Validate price and quantity
+        try:
+            if price and int(price) < 0:
+                raise ValidationError("Price cannot be negative.")
+        except ValueError:
+            messages.error(request, "Invalid input for price.")
+            return render(request, 'add_services.html', {'departments': departments})
+
+        # Process image if exists
+        # image_path = None
+        # if image:
+        #     fs = FileSystemStorage()
+        #     try:
+        #         image_path = fs.save(f'product_image/{image.name}', image)
+        #     except Exception as e:
+        #         messages.error(request, f"Error uploading image: {e}")
+        #         return render(request, 'add_product.html', {'departments': departments})
+
+        
+        service = Service(
+            name=name,
+            department=department,
+            duration=duration,
+            desc=desc,
+            price=price,
+            # image=image_path,
+            enabled=enabled
+        )
+        service.save()
+
+        messages.success(request, "Service added successfully!")
+        return redirect('add_services')  # Redirect to the same page or to another page as needed
+
+    return render(request, 'add_services.html')
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def edit_services(request):
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
+
+    try:
+        # Ensure the user is a department user
+        department = Department.objects.get(user=request.user)
+    except Department.DoesNotExist:
+        return redirect('login')  # Redirect to login if the user is not part of a department
+
+    if request.method == 'POST':
+        # Handle form submission
+        service_id = request.POST.get('service_id')
+        try:
+            service = Service.objects.get(id=service_id, department=department)
+        except Service.DoesNotExist:
+            messages.error(request, "Service not found or does not belong to your department.")
+            return redirect('department_services')
+
+        # Update service fields
+        service.name = request.POST['name']
+        service.qty = request.POST['duration']
+        service.price = request.POST['price']
+        service.desc = request.POST['desc']
+        service.enabled = 'enabled' in request.POST
+
+        # Handle image upload
+        # image = request.FILES.get('image')
+        # if image:
+        #     fs = FileSystemStorage()
+        #     try:
+        #         product.image = fs.save(f'product_image/{image.name}', image)
+        #     except Exception as e:
+        #         messages.error(request, f"Error uploading image: {e}")
+        #         return render(request, 'edit_products.html', {'product': product})
+        service.is_approved = False
+        service.is_rejected = False
+        service.save()
+        messages.success(request, "Service updated successfully!")
+        return redirect(f"{reverse('edit_services')}?service_id={service.id}")
+
+    else:
+        # Handle GET request to render the edit form
+        service_id = request.GET.get('service_id')
+        try:
+            service = Service.objects.get(id=service_id, department=department)
+        except Service.DoesNotExist:
+            messages.error(request, "Service not found or does not belong to your department.")
+            return redirect('department_services')
+
+        return render(request, 'edit_services.html', {'service': service})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def delete_services(request):
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
+
+    try:
+        # Ensure the user is a department user
+        department = Department.objects.get(user=request.user)
+    except Department.DoesNotExist:
+        return redirect('login')  # Redirect to login if the user is not part of a department
+
+    if request.method == 'POST':
+        # Handle form submission
+        service_id = request.POST.get('service_id')  # Changed to POST
+        try:
+            service = Service.objects.get(id=service_id, department=department)
+        except Service.DoesNotExist:
+            messages.error(request, "Service not found or does not belong to your department.")
+            return redirect('department_services')
+
+        service.delete()
+        messages.success(request, "Service deleted successfully!")
+        return redirect('department_services')
+
+    return render(request, 'department_services.html')
+    
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
 def student_dashboard(request):
-    # Ensure user is a student
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
     try:
+        # Ensure the user is a department user
         student = Student.objects.get(user=request.user)
+        print(f"Student found: {student.name}")
     except Student.DoesNotExist:
-        return redirect('login')  # Or show a message saying "You are not a student"
-
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+  
     return render(request, 'student_dashboard.html', {'student': student})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def student_profile(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
+    try:
+        # Ensure the user is a department user
+        student = Student.objects.get(user=request.user)
+        print(f"Student found: {student.name}")
+    except Student.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+    # Get the logged-in user
+    admin_user = request.user
+    
+    # Fetch or create a Department entry for the current user
+    student, created = Student.objects.get_or_create(user=admin_user)
+    
+    if request.method == 'POST':
+        # Retrieve data from the POST request
+        name = request.POST.get('name')
+        course_name = request.POST.get('cname')
+        branch_name = request.POST.get('bname')
+        semester = request.POST.get('semester')
+        enrollment_number = request.POST.get('enumber')
+        roll_number = request.POST.get('rnumber')
+        gender = request.POST.get('gender')
+        date_of_birth = request.POST.get('dob')
+        course_starting_year = request.POST.get('startYear')
+        course_ending_year = request.POST.get('endYear')
+        profile_tagline = request.POST.get('tagline')
+        profile_summary = request.POST.get('summary')
+        experience = request.POST.get('experience')
+        skills = request.POST.get('skills')
+        resume = request.POST.get('resume')
+        linkedin = request.POST.get('linkedin')
+        github = request.POST.get('github')
+        website = request.POST.get('website')
+        phone_number = request.POST.get('phone')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Update User model fields
+        if email:
+            admin_user.email = email
+            admin_user.username = email  # Assuming email is also used as the username
+        if password:
+            admin_user.set_password(password)
+        admin_user.save()
+
+        # Update Department model fields
+        # Update Student model fields
+        if name:
+            student.name = name
+        if course_name:
+            student.course_name = course_name
+        if branch_name:
+            student.branch_name = branch_name
+        if semester:
+            student.semester = semester
+        if enrollment_number:
+            student.enrollment_number = enrollment_number
+        if roll_number:
+            student.roll_number = roll_number
+        if gender:
+            student.gender = gender
+        if date_of_birth:
+            student.date_of_birth = date_of_birth
+        if course_starting_year:
+            student.course_starting_year = course_starting_year
+        if course_ending_year:
+            student.course_ending_year = course_ending_year
+        if profile_tagline:
+            student.profile_tagline = profile_tagline
+        if profile_summary:
+            student.profile_summary = profile_summary
+        if experience:
+            student.experience = experience
+        if skills:
+            student.skills = skills
+        if resume:
+            student.resume = resume
+        if linkedin:
+            student.linkedin = linkedin
+        if github:
+            student.github = github
+        if website:
+            student.website = website
+        if phone_number:
+            student.phone_number = phone_number
+        student.save()
+
+        # Show a success message
+        messages.success(request, 'Profile updated successfully.')
+
+        # Redirect to avoid re-submitting form on page refresh
+        return redirect('student_profile')
+
+    # Re-fetch the updated data after saving (ensure the latest values are passed)
+    student.refresh_from_db()
+    admin_user.refresh_from_db()
+
+    # Send user and department data to the template
+    return render(request, 'student_profile.html', {
+        'name': student.name,
+        'course_name': student.course_name,
+        'branch_name': student.branch_name,
+        'semester': student.semester,
+        'enrollment_number': student.enrollment_number,
+        'roll_number': student.roll_number,
+        'gender': student.gender,
+        'date_of_birth': student.date_of_birth,
+        'course_starting_year': student.course_starting_year,
+        'course_ending_year': student.course_ending_year,
+        'profile_tagline': student.profile_tagline,
+        'profile_summary': student.profile_summary,
+        'experience': student.experience,
+        'skills': student.skills,
+        'resume': student.resume,
+        'linkedin': student.linkedin,
+        'github': student.github,
+        'website': student.website,
+        'phone_number': student.phone_number,
+        'email': request.user.email,  # Include email from User model
+    })
 
 
 @cache_control(no_store=True, must_revalidate=True)

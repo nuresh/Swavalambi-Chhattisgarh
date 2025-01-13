@@ -2,6 +2,19 @@
 {% load static %}
 {% block content %}
 
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="container d-flex justify-content-center align-items-center vh-100">
     <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
         <h3 class="text-center mb-4">Register</h3>

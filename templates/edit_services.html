@@ -1,0 +1,67 @@
+{% extends 'department.html' %}
+{% load static %}
+{% block departmentcontent %}
+       
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h3 class="text-center mb-4">Edit Service</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="service_id" value="{{ service.id }}">
+            
+            <div class="form-group mb-3">
+                <label for="name">Service Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ service.name }}" required>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="qty">Duration</label>
+                <input type="text" id="duration" name="duration" class="form-control" value="{{ service.duration }}" required>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="price">Price</label>
+                <input type="number" id="price" name="price" class="form-control" value="{{ service.price }}" min="0" required>
+            </div>
+            
+            <div class="form-group mb-3">
+                <label for="desc">Description</label>
+                <textarea id="desc" name="desc" class="form-control" rows="3">{{ service.desc }}</textarea>
+            </div>
+            
+            <div class="form-check mb-3">
+                <input type="checkbox" id="enabled" name="enabled" class="form-check-input" {% if service.enabled %}checked{% endif %}>
+                <label class="form-check-label" for="enabled">Enabled</label>
+            </div>
+            
+            {% comment %} <div class="form-group mb-3">
+                <label for="image">Service Image</label>
+                <input type="file" id="image" name="image" class="form-control">
+                {% if service.image %}
+                <small>Current Image: <a href="{{ service.image.url }}" target="_blank">View Image</a></small>
+                {% endif %}
+            </div> {% endcomment %}
+            
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'department_services' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
