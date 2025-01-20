@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar -->
+    <div class="bg-dark text-white pt-3" id="sidebar-wrapper" style="width: 250px;">
+        <h5 class="ps-4">Recruiter Panel</h5>
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a href="{% url 'department_dashboard' %}" class="nav-link text-white">Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'department_products' %}" class="nav-link text-white">Jobs</a>
+            </li>
+            <li class="nav-item">
+                <a href="{% url 'department_products' %}" class="nav-link text-white">Application</a>
+            </li>
+        </ul>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper" class="w-100">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="btn btn-primary" id="menu-toggle">Toggle Sidebar</button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'recruiter_profile' %}">Profile</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+       {% block recruitercontent %}
+
+       {% endblock %}
+    </div>
+    <!-- /#page-content-wrapper -->
+</div>
+
+{% endblock %}
+

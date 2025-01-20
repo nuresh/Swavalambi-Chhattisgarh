@@ -27,4 +27,5 @@ urlpatterns = [
     path('add-services/department/', views.add_services, name='add_services'),
     path('delete-services/department/', views.delete_services, name='delete_services'),
     path('profile/student/', views.student_profile, name='student_profile'),
+    path('profile/recruiter/', views.recruiter_profile, name='recruiter_profile'),
 ]

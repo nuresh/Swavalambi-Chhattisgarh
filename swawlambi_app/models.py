@@ -90,39 +90,32 @@ class Service(models.Model):
         return self.name
 
 
-# class job(models.Model):
-#     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-#     company_name = models.ForeignKey(Company, on_delete=models.CASCADE,blank=True,null=True)
-#     job_title = models.CharField(max_length=200)
-#     job_description = models.TextField()
-#     job_location = models.CharField(max_length=200)
-#     job_type = models.CharField(max_length=200,choices=TYPE_CHOICES)
-#     job_experience = models.CharField(max_length=200,choices=EXPERIENCE_CHOICES)
-#     job_salary = models.CharField(max_length=200)
-#     job_skills = models.ForeignKey(skills, on_delete=models.CASCADE,blank=True,null=True)
-#     job_role = models.CharField(max_length=200,choices=JOB_ROLE_CHOICES)
-#     job_posted_on = models.DateField(auto_now_add=True)
-#     job_last_date = models.DateField()
-#     job_posted_by = models.CharField(max_length=200)
-#     contact_email = models.EmailField()
-#     active = models.BooleanField(default=True)
-#     timing = models.CharField(max_length=30,choices=TIMING_CHOICES)
+class Job(models.Model):
+    recruiter_name = models.ForeignKey(Recruiter, on_delete=models.CASCADE)
+    job_title = models.CharField(max_length=200)
+    job_description = models.TextField()
+    job_location = models.CharField(max_length=200)
+    job_type = models.CharField(max_length=200)
+    job_experience = models.CharField(max_length=200)
+    job_salary = models.CharField(max_length=200)
+    job_skills = models.CharField(max_length=200)
+    job_posted_on = models.DateField(auto_now_add=True)
+    contact_email = models.EmailField()
+    active = models.BooleanField(default=True)
 
-#     def __str__(self):
-#         return self.job_title
+    def __str__(self):
+        return self.job_title
 
-#     class Meta:
-#         verbose_name_plural = "Jobs"
+    class Meta:
+        verbose_name_plural = "Jobs"
 
-# class applications(models.Model):
-#     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-#     student = models.ForeignKey(Student, on_delete=models.CASCADE)
-#     job = models.ForeignKey(job, on_delete=models.CASCADE)
-#     switch = models.BooleanField(default=True)
-#     application_status = models.CharField(max_length=200,default="Applied")
+class Applications(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    job = models.ForeignKey(Job, on_delete=models.CASCADE)
+    application_status = models.CharField(max_length=200,default="Applied")
 
-#     def __str__(self):
-#         return self.job.job_title
+    def __str__(self):
+        return self.job.job_title
     
-#     class Meta:
-#         verbose_name_plural = "Applications"
+    class Meta:
+        verbose_name_plural = "Applications"

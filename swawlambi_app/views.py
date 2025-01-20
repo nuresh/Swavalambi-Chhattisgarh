@@ -803,13 +803,13 @@ def student_profile(request):
         github = request.POST.get('github')
         website = request.POST.get('website')
         phone_number = request.POST.get('phone')
-        email = request.POST.get('email')
+        # email = request.POST.get('email')
         password = request.POST.get('password')
 
         # Update User model fields
-        if email:
-            admin_user.email = email
-            admin_user.username = email  # Assuming email is also used as the username
+        # if email:
+        #     admin_user.email = email
+        #     admin_user.username = email  # Assuming email is also used as the username
         if password:
             admin_user.set_password(password)
         admin_user.save()
@@ -894,12 +894,102 @@ def student_profile(request):
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
 def recruiter_dashboard(request):
-    # Ensure user is a recruiter
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
     try:
+        # Ensure the user is a department user
         recruiter = Recruiter.objects.get(user=request.user)
+        print(f"Recruiter found: {recruiter.name}")
     except Recruiter.DoesNotExist:
-        return redirect('login')  # Or show a message saying "You are not a recruiter"
-
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+  
     return render(request, 'recruiter_dashboard.html', {'recruiter': recruiter})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def recruiter_profile(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
+    try:
+        # Ensure the user is a department user
+        student = Recruiter.objects.get(user=request.user)
+        print(f"Recruiter found: {student.name}")
+    except Student.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+    # Get the logged-in user
+    admin_user = request.user
+    
+    # Fetch or create a Department entry for the current user
+    recruitment, created = Recruitment.objects.get_or_create(user=admin_user)
+    
+    if request.method == 'POST':
+        # Retrieve data from the POST request
+        name = request.POST.get('name')
+        address = request.POST.get('address')
+        gst = request.POST.get('gst')
+        industry_name = request.POST.get('industry_name')
+        # email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        # Update User model fields
+        # if email:
+        #     admin_user.email = email
+        #     admin_user.username = email  # Assuming email is also used as the username
+        if password:
+            admin_user.set_password(password)
+        admin_user.save()
+
+        # Update Department model fields
+        # Update Student model fields
+        if name:
+            recruiter.name = name
+        if address:
+            recruiter.address = address
+        if gst:
+            recruiter.gst = gst
+        if industry_name:
+            recruiter.industry_name = industry_name
+        student.save()
+
+        # Show a success message
+        messages.success(request, 'Profile updated successfully.')
+
+        # Redirect to avoid re-submitting form on page refresh
+        return redirect('recruitment_profile')
+
+    # Re-fetch the updated data after saving (ensure the latest values are passed)
+    recruitment.refresh_from_db()
+    admin_user.refresh_from_db()
+
+    # Send user and department data to the template
+    return render(request, 'recruitment_profile.html', {
+        'name': student.name,
+        'address': recruitrer.address,
+        'branch_name': student.branch_name,
+        'semester': student.semester,
+        'enrollment_number': student.enrollment_number,
+        'roll_number': student.roll_number,
+        'gender': student.gender,
+        'date_of_birth': student.date_of_birth,
+        'course_starting_year': student.course_starting_year,
+        'course_ending_year': student.course_ending_year,
+        'profile_tagline': student.profile_tagline,
+        'profile_summary': student.profile_summary,
+        'experience': student.experience,
+        'skills': student.skills,
+        'resume': student.resume,
+        'linkedin': student.linkedin,
+        'github': student.github,
+        'website': student.website,
+        'phone_number': student.phone_number,
+        'email': request.user.email,  # Include email from User model
+    })
 
 
