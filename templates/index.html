@@ -178,18 +178,20 @@
             <div class="scroll-container d-flex flex-nowrap product-section">
 
   <!-- Product Card 1: Mushroom -->
-            <div class="card item-card shadow" style="min-width: 300px; border: none; border-radius: 15px; overflow: hidden; background: linear-gradient(135deg, #ffffff, #f0f4ff);">
-                <img src="{% static 'img/mush.jpeg' %}" alt="Mushroom" class="item-image" style="height: 200px; object-fit: cover;">
-                <div class="card-body">
-                    <h4 class="card-title">Fresh Mushrooms</h4>
-                    <p class="card-text">Hand-picked fresh mushrooms, perfect for cooking or adding to salads.</p>
-                    <p class="card-info">Department: Vegetables</p>
-                    <p class="card-price" style="color: #d40000; font-weight: bold;">₹199.99</p>
-                    <a href="#" class="btn btn-custom-buy mt-3" style="background-color: #001f3f; color: #ffffff; padding: 10px 20px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease-in-out;">Buy Now</a>
+            {% for product in products %}
+                <div class="card item-card shadow" style="min-width: 300px; border: none; border-radius: 15px; overflow: hidden; background: linear-gradient(135deg, #ffffff, #f0f4ff);">
+                    <img src="/media/{{product.image}}" alt="Product Image" class="item-image" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h4 class="card-title">{{product.name}}</h4>
+                        <p class="card-text">{{product.desc}}</p>
+                        <p class="card-info">Department: {{product.department}}</p>
+                        <p class="card-price" style="color: #d40000; font-weight: bold;">₹{{product.price}}</p>
+                        <a href="#" class="btn btn-custom-buy mt-3" style="background-color: #001f3f; color: #ffffff; padding: 10px 20px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease-in-out;">Buy Now</a>
+                    </div>
                 </div>
-            </div>
+            {% endfor %}
 
-            <!-- Product Card 2: Pickle -->
+            {% comment %} <!-- Product Card 2: Pickle -->
             <div class="card item-card shadow" style="min-width: 300px; border: none; border-radius: 15px; overflow: hidden; background: linear-gradient(135deg, #ffffff, #f0f4ff);">
                 <img src="{% static 'img/pickel.jpeg' %}" alt="Pickle" class="item-image" style="height: 200px; object-fit: cover;">
                 <div class="card-body">
@@ -223,7 +225,7 @@
                     <p class="card-price" style="color: #d40000; font-weight: bold;">₹499.99</p>
                     <a href="#" class="btn btn-custom-buy mt-3" style="background-color: #001f3f; color: #ffffff; padding: 10px 20px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease-in-out;">Buy Now</a>
                 </div>
-            </div>
+            </div> {% endcomment %}
                 <!-- Repeat product cards as needed -->
             </div>
         </div>

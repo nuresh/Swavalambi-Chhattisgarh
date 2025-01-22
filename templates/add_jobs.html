@@ -1,0 +1,93 @@
+{% extends 'recruiter.html' %}
+{% load static %}
+{% block recruitercontent %}
+       
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h3 class="text-center mb-4">Add Job</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- JOb Title -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Job Title</label>
+                <input type="text" class="form-control" id="title" name="title" placeholder="Enter job title" required>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="desc" class="form-label">Description</label>
+                <textarea class="form-control" id="desc" name="desc" rows="3" placeholder="Enter job description"></textarea>
+            </div>
+
+            <!-- Location -->
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" class="form-control" id="location" name="location" placeholder="Enter Location">
+            </div>
+
+            <!-- Type -->
+            <div class="mb-3">
+                <label for="type" class="form-label">Job Type</label>
+                <input type="text" class="form-control" id="type" name="type" placeholder="Enter Job Type">
+            </div>
+
+             <!-- Experience -->
+             <div class="mb-3">
+                <label for="exp" class="form-label">Experience</label>
+                <input type="text" class="form-control" id="exp" name="exp" placeholder="Enter Experience Required">
+            </div>
+
+             <!-- Salary -->
+             <div class="mb-3">
+                <label for="salary" class="form-label">Salary</label>
+                <input type="text" class="form-control" id="salary" name="salary" placeholder="Enter Salary">
+            </div>
+
+             <!-- Skill -->
+             <div class="mb-3">
+                <label for="skill" class="form-label">Skills</label>
+                <input type="text" class="form-control" id="skill" name="skill" placeholder="Enter Skills Required">
+            </div>
+
+            <!-- Job Potsed On -->
+            <div class="mb-3">
+                <label for="post_date" class="form-label">Job Posted On</label>
+                <input type="date" class="form-control" id="post_date" name="post_date" value="{{ job_posted_on |date:'Y-m-d' }}">
+            </div>
+
+            <!-- Contact Email -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Contact Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Enter Contact Email">
+            </div>
+
+            <!-- Enabled Checkbox -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="enabled" name="enabled" checked>
+                <label class="form-check-label" for="enabled">Enabled</label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-100">Add Product</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}

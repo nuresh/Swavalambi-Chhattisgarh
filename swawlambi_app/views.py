@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Student, Department, Recruiter, Product, Service
+from .models import Student, Department, Recruiter, Product, Service, Job
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
@@ -14,7 +14,13 @@ from django.urls import reverse
 
 
 def index(request):
-    return render(request, 'index.html')
+    products = Product.objects.filter(is_approved=True).order_by('-id')
+
+    context = {
+        'products':products,
+    }
+
+    return render(request, 'index.html', context)
 
 otp_storage = {}
 
@@ -30,6 +36,7 @@ def register(request):
             password = request.POST['password']
             confirm_password = request.POST['confirm_password']
             name = request.POST['name']
+            mobile = request.POST['mobile']
 
             # Check if email already exists
             if User.objects.filter(email=email).exists():
@@ -60,6 +67,7 @@ def register(request):
                 'email': email,
                 'password': password,
                 'name': name,
+                'mobile':mobile
             }
 
             messages.success(request, "OTP has been sent to your email.")
@@ -86,13 +94,14 @@ def register(request):
                     # Create additional records based on user type
                     user_type = registration_data['user_type']
                     name = registration_data['name']
+                    mobile = registration_data['mobile']
 
                     if user_type == 'student':
-                        Student.objects.create(user=user, name=name)
+                        Student.objects.create(user=user, name=name, phone_number=mobile)
                     elif user_type == 'department':
-                        Department.objects.create(user=user, department_name=name)
+                        Department.objects.create(user=user, department_name=name, phone_number=mobile)
                     elif user_type == 'recruiter':
-                        Recruiter.objects.create(user=user, name=name)
+                        Recruiter.objects.create(user=user, name=name, phone_number=mobile)
 
                     messages.success(request, "Registration successful! Please login.")
                     return redirect('login')
@@ -303,6 +312,34 @@ def admin_services(request):
         return redirect('admin_services')
 
     return render(request, 'admin_services.html', {'services': services})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def admin_jobs(request):
+    # Check if the user is an admin (either staff user or custom admin model)
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')  # If not an admin, redirect to login
+
+    jobs = Job.objects.filter(is_rejected = False).order_by('-id')
+    
+    if request.method == 'POST':
+        job_id = request.POST.get('job_id')
+        action = request.POST.get('action')
+        job = get_object_or_404(Job, id=job_id)
+        
+        # Handle actions based on the button clicked
+        if action == 'approve':
+            job.is_approved = True
+            job.save()
+        elif action == 'reject':
+            job.is_rejected = True
+            job.save()
+        elif action == 'delete':
+            job.delete()
+
+        return redirect('admin_jobs')
+
+    return render(request, 'admin_jobs.html', {'jobs': jobs})
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
@@ -893,6 +930,23 @@ def student_profile(request):
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
+def student_jobs(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
+    try:
+        # Ensure the user is a department user
+        student = Student.objects.get(user=request.user)
+        print(f"Student found: {student.name}")
+    except Student.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+  
+    pass
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
 def recruiter_dashboard(request):
     if request.user.is_staff:
         # If the user is an admin, redirect them to the admin dashboard
@@ -927,7 +981,7 @@ def recruiter_profile(request):
     admin_user = request.user
     
     # Fetch or create a Department entry for the current user
-    recruitment, created = Recruitment.objects.get_or_create(user=admin_user)
+    recruiter, created = Recruiter.objects.get_or_create(user=admin_user)
     
     if request.method == 'POST':
         # Retrieve data from the POST request
@@ -962,34 +1016,192 @@ def recruiter_profile(request):
         messages.success(request, 'Profile updated successfully.')
 
         # Redirect to avoid re-submitting form on page refresh
-        return redirect('recruitment_profile')
+        return redirect('recruiter_profile')
 
     # Re-fetch the updated data after saving (ensure the latest values are passed)
-    recruitment.refresh_from_db()
+    recruiter.refresh_from_db()
     admin_user.refresh_from_db()
 
     # Send user and department data to the template
-    return render(request, 'recruitment_profile.html', {
-        'name': student.name,
-        'address': recruitrer.address,
-        'branch_name': student.branch_name,
-        'semester': student.semester,
-        'enrollment_number': student.enrollment_number,
-        'roll_number': student.roll_number,
-        'gender': student.gender,
-        'date_of_birth': student.date_of_birth,
-        'course_starting_year': student.course_starting_year,
-        'course_ending_year': student.course_ending_year,
-        'profile_tagline': student.profile_tagline,
-        'profile_summary': student.profile_summary,
-        'experience': student.experience,
-        'skills': student.skills,
-        'resume': student.resume,
-        'linkedin': student.linkedin,
-        'github': student.github,
-        'website': student.website,
-        'phone_number': student.phone_number,
+    return render(request, 'recruiter_profile.html', {
+        'name': recruiter.name,
+        'address': recruiter.address,
+        'gst': recruiter.gst,
+        'industry_name': recruiter.industry_name,
+        # 'phone_number': recruiter.phone_number,
         'email': request.user.email,  # Include email from User model
     })
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def recruiter_jobs(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
+    try:
+        # Ensure the user is a department user
+        recruiter = Recruiter.objects.get(user=request.user)
+        print(f"Recruiter found: {recruiter.name}")
+    except Student.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+    # Get the logged-in user
+    admin_user = request.user
+    
+    # Fetch or create a Department entry for the current user
+    recruiter, created = Recruiter.objects.get_or_create(user=admin_user)
+    
+    jobs = Job.objects.filter(recruiter=recruiter).order_by('-id')
+    
+    if request.method == 'POST':
+        job_id = request.POST.get('job_id')
+        action = request.POST.get('action')
+        job = get_object_or_404(Job, id=job_id)
+        
+        # Handle actions based on the button clicked
+        if action == 'approve':
+            job.is_approved = True
+            job.save()
+        elif action == 'reject':
+            job.delete()
+        elif action == 'delete':
+            job.delete()
+
+        return redirect('recruiter_jobs')
+
+    return render(request, 'recruiter_jobs.html', {'jobs': jobs})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def add_jobs(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
+    try:
+        # Ensure the user is a department user
+        recruiter = Recruiter.objects.get(user=request.user)
+        print(f"Recruiter found: {recruiter.name}")
+    except Recruiter.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+    admin_user = request.user
+    
+    # Fetch or create a Department entry for the current user
+    recruiter, created = Recruiter.objects.get_or_create(user=admin_user)
+    
+    if request.method == 'POST':
+        title = request.POST['title']
+        desc = request.POST.get('desc')
+        location = request.POST.get('location')
+        job_type = request.POST.get('type')
+        exp = request.POST.get('exp')
+        salary = request.POST.get('salary')
+        skill = request.POST.get('skill')
+        post_date = request.POST.get('post_date')
+        email = request.POST.get('email')
+        enabled = 'enabled' in request.POST  # Checkbox field
+        
+                
+        job = Job(
+            recruiter=recruiter,
+            job_title=title,
+            job_description=desc,
+            job_location=location,
+            job_type=job_type,
+            job_experience=exp,
+            job_salary=salary,
+            job_skills=skill,
+            job_posted_on=post_date,
+            contact_email = email,
+            enabled=enabled
+        )
+        job.save()
+
+        messages.success(request, "Job added successfully!")
+        return redirect('add_jobs')  # Redirect to the same page or to another page as needed
+
+    return render(request, 'add_jobs.html')
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def edit_jobs(request):
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
+
+    try:
+        # Ensure the user is a department user
+        recruiter = Recruiter.objects.get(user=request.user)
+    except Recruiter.DoesNotExist:
+        return redirect('login')  # Redirect to login if the user is not part of a department
+
+    if request.method == 'POST':
+        # Handle form submission
+        job_id = request.POST.get('job_id')
+        try:
+            job = Job.objects.get(id=job_id, recruiter=recruiter)
+        except Job.DoesNotExist:
+            messages.error(request, "Job not found or does not belong to you.")
+            return redirect('recruiter_jobs')
+
+        # Update job fields
+        job.job_title = request.POST['title']
+        job.job_description = request.POST['desc']
+        job.job_location = request.POST['location']
+        job.job_type = request.POST['type']
+        job.job_experience = request.POST['exp']
+        job.job_salary = request.POST['salary']
+        job.job_skils = request.POST['skill']
+        job.job_poted_on = request.POST['post_date']
+        job.contact_email = request.POST['email']
+        job.enabled = 'enabled' in request.POST
+
+       
+        job.is_approved = False
+        job.is_rejected = False
+        job.save()
+        messages.success(request, "Job updated successfully!")
+        return redirect(f"{reverse('edit_jobs')}?job_id={job.id}")
+
+    else:
+        # Handle GET request to render the edit form
+        job_id = request.GET.get('job_id')
+        try:
+            job = Job.objects.get(id=job_id, recruiter=recruiter)
+        except Job.DoesNotExist:
+            messages.error(request, "Job not found or does not belong to you.")
+            return redirect('recruiter_jobs')
+
+        return render(request, 'edit_jobs.html', {'job': job})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def delete_jobs(request):
+    if request.user.is_staff:
+        return redirect('admin_dashboard')
+
+    try:
+        # Ensure the user is a department user
+        recuiter = Recruiter.objects.get(user=request.user)
+    except Recruiter.DoesNotExist:
+        return redirect('login')  # Redirect to login if the user is not part of a recruiter
+
+    if request.method == 'POST':
+        # Handle form submission
+        job_id = request.POST.get('job_id')  # Changed to POST
+        try:
+            job = Job.objects.get(id=job_id, recruiter=recruiter)
+        except Job.DoesNotExist:
+            messages.error(request, "Job not found or does not belong to you.")
+            return redirect('recruiter_jobs')
+
+        job.delete()
+        messages.success(request, "Job deleted successfully!")
+        return redirect('recruiter_jobs')
+
+    return render(request, 'recruiter_jobs.html')
 
 

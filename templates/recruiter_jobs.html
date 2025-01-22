@@ -1,0 +1,76 @@
+{% extends 'recruiter.html' %}
+{% load static %}
+{% block recruitercontent %}
+<div class="container-fluid p-4">
+    <h1 class="mt-4">Welcome to the Recruiter Dashboard</h1>
+
+<div>
+    <a href="{% url 'add_jobs' %}" class="btn btn-primary">
+        Add Jobs
+    </a>
+</div>
+    <!-- List Page -->
+    <div class="mt-4">
+        <h2>Jobs List</h2>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Job Title</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Salary</th>
+                    <th>Enabled</th>
+                    <th>Approved</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in jobs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ job.job_title }}</td>
+                    <td>{{ job.job_description }}</td>
+                    <td>{{ job.job_location }}</td>
+                    <td>{{ job.job_type }}</td>
+                    <td>{{ job.job_salary }}</td>
+                    <td>{{ job.enabled | yesno:"Yes,No" }}</td>
+                    <td>{{ job.is_approved|yesno:"Yes,No" }}</td>
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            <div class="w-50">
+                                <form method="GET" action="{% url 'edit_jobs' %}" class="w-100 d-flex justify-content-between">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="job_id" value="{{ job.id }}">
+                                    <button class="btn btn-warning btn-sm w-100 me-1" type="submit" name="edit" value="edit">Edit</button>
+                                </form>
+                            </div>
+                            <div class="w-50">
+                                <form method="POST" action="{% url 'delete_jobs' %}" class="w-100 d-flex justify-content-between">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="job_id" value="{{ job.id }}">
+                                    <button class="btn btn-danger btn-sm w-100" type="submit" name="delete" value="delete">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center mt-1">
+                            {% if job.is_rejected %}
+                            <div class="w-100">
+                                    <button class="btn btn-danger btn-sm w-100" type="" name="reject" value="reject" disabled>Rejected</button>
+                                </form>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center">No jobs found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
