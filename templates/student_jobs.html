@@ -1,0 +1,62 @@
+{% extends 'student.html' %}
+{% load static %}
+{% block studentcontent %}
+<div class="container-fluid p-4">
+    <h1 class="mt-4">Welcome to the Student Dashboard</h1>
+
+
+    <!-- List Page -->
+    <div class="mt-4">
+        <h2>Jobs List</h2>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Job Title</th>
+                    <th>Description</th>
+                    <th>Location</th>
+                    <th>Type</th>
+                    <th>Expeience</th>
+                    <th>Salary</th>
+                    <th>Skills</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for job in jobs %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ job.job_title }}</td>
+                    <td>{{ job.job_description }}</td>
+                    <td>{{ job.job_location }}</td>
+                    <td>{{ job.job_type }}</td>
+                    <td>{{ job.job_experience }}</td>
+                    <td>{{ job.job_salary }}</td>
+                    <td>{{ job.job_skills }}</td>
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            {% if job.id in applied_jobs %}
+                            <!-- If already applied -->
+                            <button class="btn btn-success btn-sm w-100" disabled>Applied</button>
+                            {% else %}
+                            <!-- If not applied -->
+                            <form method="POST" action="{% url 'apply_job' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="job_id" value="{{ job.id }}">
+                                <input type="hidden" name="student_id" value="{{ student.id }}">
+                                <button class="btn btn-primary btn-sm w-100" type="submit">Apply</button>
+                            </form>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="9" class="text-center">No jobs found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

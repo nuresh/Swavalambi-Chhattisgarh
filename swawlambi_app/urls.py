@@ -31,7 +31,8 @@ urlpatterns = [
     path('jobs/student/', views.student_jobs, name='student_jobs'),
     path('profile/recruiter/', views.recruiter_profile, name='recruiter_profile'),
     path('jobs/recruiter/', views.recruiter_jobs, name='recruiter_jobs'),
-    path('edit-jobs/department/', views.edit_jobs, name='edit_jobs'),
-    path('add-jobs/department/', views.add_jobs, name='add_jobs'),
-    path('delete-jobs/department/', views.delete_jobs, name='delete_jobs'),
+    path('edit-jobs/recruiter/', views.edit_jobs, name='edit_jobs'),
+    path('add-jobs/recruiter/', views.add_jobs, name='add_jobs'),
+    path('delete-jobs/recruiter/', views.delete_jobs, name='delete_jobs'),
+    path('applied-jobs/recruiter/', views.applied_jobs, name='applied_jobs'),
 ]

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Student, Department, Recruiter, Product, Service, Job
+from .models import Student, Department, Recruiter, Product, Service, Job, Applications
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
@@ -934,7 +934,7 @@ def student_jobs(request):
     if request.user.is_staff:
         # If the user is an admin, redirect them to the admin dashboard
         return redirect('admin_dashboard')
-    
+        
     try:
         # Ensure the user is a department user
         student = Student.objects.get(user=request.user)
@@ -942,8 +942,31 @@ def student_jobs(request):
     except Student.DoesNotExist:
         # If the user is not a department user, redirect to login or show an error
         return redirect('login')  # Or show a message saying "You are not a department"
-  
-    pass
+
+    if request.method == "POST":
+        # Handle the "Apply" form submission
+        job_id = request.POST.get('job_id')
+        student_id = request.POST.get('student_id')
+        if student_id == str(student.id):  # Validate the student making the request
+            try:
+                job = Job.objects.get(id=job_id)
+                # Check if the application already exists
+                if not Applications.objects.filter(student=student, job=job).exists():
+                    Applications.objects.create(student=student, job=job)
+            except Job.DoesNotExist:
+                pass  # Handle the case where the job does not exist
+        return redirect('student_jobs')  # Redirect back to the jobs page after applying
+
+    # Fetch all jobs and applied jobs for the student
+    jobs = Job.objects.filter(is_approved=True, enabled=True)
+    applied_jobs = Applications.objects.filter(student=student).values_list('job_id', flat=True)
+
+    return render(request, 'student_jobs.html', {
+        'jobs': jobs,
+        'student': student,
+        'applied_jobs': applied_jobs,
+    })
+    
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
@@ -971,9 +994,9 @@ def recruiter_profile(request):
     
     try:
         # Ensure the user is a department user
-        student = Recruiter.objects.get(user=request.user)
-        print(f"Recruiter found: {student.name}")
-    except Student.DoesNotExist:
+        recruiter = Recruiter.objects.get(user=request.user)
+        print(f"Recruiter found: {recruiter.name}")
+    except Recruiter.DoesNotExist:
         # If the user is not a department user, redirect to login or show an error
         return redirect('login')  # Or show a message saying "You are not a department"
 
@@ -1043,7 +1066,7 @@ def recruiter_jobs(request):
         # Ensure the user is a department user
         recruiter = Recruiter.objects.get(user=request.user)
         print(f"Recruiter found: {recruiter.name}")
-    except Student.DoesNotExist:
+    except Recruiter.DoesNotExist:
         # If the user is not a department user, redirect to login or show an error
         return redirect('login')  # Or show a message saying "You are not a department"
 
@@ -1205,3 +1228,38 @@ def delete_jobs(request):
     return render(request, 'recruiter_jobs.html')
 
 
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def applied_jobs(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+    
+    try:
+        # Ensure the user is a department user
+        recruiter = Recruiter.objects.get(user=request.user)
+        print(f"Recruiter found: {recruiter.name}")
+    except Recruiter.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+    # Get the logged-in user
+    admin_user = request.user
+    
+    # Fetch or create a Department entry for the current user
+    recruiter, created = Recruiter.objects.get_or_create(user=admin_user)
+    
+    jobs = Job.objects.filter(recruiter=recruiter).order_by('-id')
+
+    # Get all applications for the recruiter's jobs
+    applications = Applications.objects.filter(job__recruiter=recruiter).select_related('job', 'student')
+
+    # Prepare the context data
+    context = {
+        'recruiter': recruiter,
+        'jobs': jobs,
+        'applications': applications,
+    }
+
+    # Render the template
+    return render(request, 'applied_jobs.html', context)
