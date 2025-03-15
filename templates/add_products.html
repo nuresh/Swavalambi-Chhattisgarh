@@ -16,7 +16,7 @@
     </div>
 {% endif %}
 
-<div class="container d-flex justify-content-center align-items-center vh-100">
+<div class="container d-flex justify-content-center align-items-center m-3">
     <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
         <h3 class="text-center mb-4">Add Product</h3>
 
@@ -51,6 +51,18 @@
             <div class="mb-3">
                 <label for="image" class="form-label">Product Image</label>
                 <input type="file" class="form-control" id="image" name="image" accept="image/*">
+            </div>
+
+             <!-- Amazon Link -->
+             <div class="mb-3">
+                <label for="amazon" class="form-label">Amazon Link</label>
+                <input type="text" class="form-control" id="amazon" name="amazon" placeholder="Enter product amazon link">
+            </div>
+
+             <!-- Description -->
+             <div class="mb-3">
+                <label for="flipkart" class="form-label">Flipkart Link</label>
+                <input type="text" class="form-control" id="flipkart" name="flipkart" placeholder="Enter product flipkart link">
             </div>
 
             <!-- Enabled Checkbox -->

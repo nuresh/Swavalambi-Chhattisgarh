@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Student, Department, Recruiter, Product, Service, Job, Applications
+from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
@@ -14,10 +14,52 @@ from django.urls import reverse
 
 
 def index(request):
-    products = Product.objects.filter(is_approved=True).order_by('-id')
+    products = Product.objects.filter(enabled=True).select_related('department').order_by('-id')
+    services = Service.objects.filter(enabled=True).select_related('department').order_by('-id')
+    latest_news = Notice.objects.filter(enabled=True).order_by('-id')
+    student_count = Student.objects.count()
+    recruiter_count = Recruiter.objects.count()
+    product_count = Product.objects.count()
+    service_count = Service.objects.count()
+
+    # Extract all required product details
+    product_details = []
+    for product in products:
+        product_details.append({
+            'id': product.id,
+            'name': product.name,
+            'desc': product.desc, 
+            'qty': product.qty,
+            'price': product.price,
+            'image': product.image.url,  # Use a default image if not uploaded
+            'amazon_link': product.amazon_link,
+            'flipkart_link': product.flipkart_link,
+            'concerened_person': product.department.concerened_person,
+            'phone_number': product.department.phone_number,
+        })
+
+    # Extract all required service details
+    service_details = []
+    for service in services:
+        service_details.append({
+            'id': service.id,
+            'name': service.name,
+            'desc': service.desc, 
+            'duration': service.duration,
+            'price': service.price,
+            'concerened_person': service.department.concerened_person,
+            'phone_number': service.department.phone_number,
+        })
+
 
     context = {
-        'products':products,
+        'products':product_details,
+        'services':service_details,
+        'latest_news':latest_news,
+        'student_count':student_count,
+        'recruiter_count':recruiter_count,
+        'product_count':product_count,
+        'service_count':service_count,
     }
 
     return render(request, 'index.html', context)
@@ -382,6 +424,7 @@ def department_profile(request):
     if request.method == 'POST':
         # Retrieve data from the POST request
         department_name = request.POST.get('department_name')
+        concerened_person = request.POST.get('concerened_person')
         hod = request.POST.get('hod')
         # email = request.POST.get('email')
         password = request.POST.get('password')
@@ -397,6 +440,8 @@ def department_profile(request):
         # Update Department model fields
         if department_name:
             department.department_name = department_name
+        if concerened_person:
+            department.concerened_person = concerened_person
         if hod:
             department.head_of_department = hod
         department.save()
@@ -415,6 +460,7 @@ def department_profile(request):
     return render(request, 'department_profile.html', {
         'email': admin_user.email,
         'department_name': department.department_name,
+        'concerened_person':department.concerened_person,
         'hod': department.head_of_department,
     })
 
@@ -438,17 +484,17 @@ def department_products(request):
     
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
-        action = request.POST.get('action')
+        # action = request.POST.get('action')
         product = get_object_or_404(Product, id=product_id)
         
         # Handle actions based on the button clicked
-        if action == 'approve':
-            product.is_approved = True
-            product.save()
-        elif action == 'reject':
-            product.delete()
-        elif action == 'delete':
-            product.delete()
+        # if action == 'approve':
+        #     product.is_approved = True
+        #     product.save()
+        # elif action == 'reject':
+        #     product.delete()
+        # elif action == 'delete':
+        #     product.delete()
 
         return redirect('department_products')
 
@@ -481,6 +527,8 @@ def add_products(request):
         price = request.POST.get('price')
         enabled = 'enabled' in request.POST  # Checkbox field
         image = request.FILES.get('image')
+        amazon_link = request.POST['amazon']
+        flipkart_link = request.POST['flipkart']
 
         # Validate price and quantity
         try:
@@ -510,6 +558,8 @@ def add_products(request):
             desc=desc,
             price=price,
             image=image_path,
+            amazon_link = amazon_link,
+            flipkart_link = flipkart_link,
             enabled=enabled
         )
         product.save()
@@ -545,6 +595,8 @@ def edit_products(request):
         product.qty = request.POST['qty']
         product.price = request.POST['price']
         product.desc = request.POST['desc']
+        product.amazon_link = request.POST['amazon']
+        product.flipkart_link = request.POST['flipkart']
         product.enabled = 'enabled' in request.POST
 
         # Handle image upload
@@ -556,8 +608,8 @@ def edit_products(request):
             except Exception as e:
                 messages.error(request, f"Error uploading image: {e}")
                 return render(request, 'edit_products.html', {'product': product})
-        product.is_approved = False
-        product.is_rejected = False
+        # product.is_approved = False
+        # product.is_rejected = False
         product.save()
         messages.success(request, "Product updated successfully!")
         return redirect(f"{reverse('edit_products')}?product_id={product.id}")
@@ -1009,11 +1061,15 @@ def recruiter_profile(request):
     if request.method == 'POST':
         # Retrieve data from the POST request
         name = request.POST.get('name')
+        hr_name = request.POST.get('hrname')
+        hr_mail = request.POST.get('hremail')
+        hr_mobile = request.POST.get('hrmobile')
         address = request.POST.get('address')
         gst = request.POST.get('gst')
-        industry_name = request.POST.get('industry_name')
-        # email = request.POST.get('email')
+        industry_type = request.POST.get('industrytype')
+        company_phone_number = request.POST.get('companyphonenumber')
         password = request.POST.get('password')
+        
 
         # Update User model fields
         # if email:
@@ -1027,13 +1083,21 @@ def recruiter_profile(request):
         # Update Student model fields
         if name:
             recruiter.name = name
+        if hr_name:
+            recruiter.hr_name = hr_name
+        if hr_mail:
+            recruiter.hr_mail = hr_mail
+        if hr_mobile:
+            recruiter.hr_mobile = hr_mobile
         if address:
             recruiter.address = address
         if gst:
             recruiter.gst = gst
-        if industry_name:
-            recruiter.industry_name = industry_name
-        student.save()
+        if industry_type:
+            recruiter.industry_type = industry_type
+        if company_phone_number:
+            recruiter.company_phone_number = company_phone_number
+        recruiter.save()
 
         # Show a success message
         messages.success(request, 'Profile updated successfully.')
@@ -1048,11 +1112,14 @@ def recruiter_profile(request):
     # Send user and department data to the template
     return render(request, 'recruiter_profile.html', {
         'name': recruiter.name,
+        'email': request.user.email,  # Include email from User model
+        'hr_name': recruiter.hr_name,
+        'hr_mail' : recruiter.hr_mail,
+        'hr_mobile' : recruiter.hr_mobile,
         'address': recruiter.address,
         'gst': recruiter.gst,
-        'industry_name': recruiter.industry_name,
-        # 'phone_number': recruiter.phone_number,
-        'email': request.user.email,  # Include email from User model
+        'industry_type': recruiter.industry_type,
+        'company_phone_number' : recruiter.company_phone_number,      
     })
 
 @cache_control(no_store=True, must_revalidate=True)

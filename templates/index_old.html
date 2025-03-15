@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<section id="home" class="hero-section" style="height: 350px; margin-top: 1rem;">
+    <div class="container-fluid px-3 h-100">
+        <div class="row gx-3 h-100">
+            <!-- Image Slider (2/3 of the screen) -->
+            <div class="col-lg-8 h-100">
+                <div id="compactSlider" class="carousel slide h-100 shadow-sm" data-bs-ride="carousel" style="border-radius: 10px; background-color: #001f3f;">
+                    <div class="carousel-inner h-100">
+                        <div class="carousel-item active h-100">
+                            <img src="{% static 'img/homeimg2.png' %}" class="d-block w-100 h-100 shadow" alt="Slide 1" style="object-fit: cover; border-radius: 10px;">
+                        </div>
+                        <div class="carousel-item h-100">
+                            <img src="{% static 'img/homeimg3.png' %}" class="d-block w-100 h-100 shadow" alt="Slide 2" style="object-fit: cover; border-radius: 10px;">
+                        </div>
+                        <div class="carousel-item h-100">
+                            <img src="{% static 'img/homeimg4.png' %}" class="d-block w-100 h-100 shadow" alt="Slide 3" style="object-fit: cover; border-radius: 10px;">
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#compactSlider" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" style="background-color: #D3D3D3;" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#compactSlider" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" style="background-color: #D3D3D3;" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Message Rotator (1/3 of the screen) -->
+            <div class="col-lg-4 h-100" style="height: 400px; margin-top: 1rem;">
+                <div class="h-100 d-flex align-items-center justify-content-center">
+                    <div class="message-rotator shadow-sm" style="width: 100%; height: 90%; background-color: #f0f4ff; border-radius: 15px; overflow: hidden; position: relative;">
+                        <div class="message-box p-3" style="position: absolute; opacity: 0; transition: opacity 1s;">
+                            <h3 class="message-title h6" style="font-family: 'Poppins', sans-serif; color: #001f3f;">Message from HVC</h3>
+                            <img src="{% static 'img/HVC-GGV-Bilaspur.jpeg' %}" alt="Vice-Chancellor" class="rounded-circle mb-2" width="60" height="60" style="border: 3px solid #001f3f;">
+                            <h6 style="color: #001f3f; font-weight: bold;">Prof. Alok Kumar Chakrawal</h6>
+                            <p class="message-text mb-2" style="font-size: 0.9rem;">Welcome to our Centre for Distance and Online Education. We are committed to providing world-class education that is accessible to all. Our programs are designed to empower you with the knowledge and skills needed for success in today's rapidly evolving world.</p>
+                        </div>
+                        <div class="message-box p-3" style="position: absolute; opacity: 0; transition: opacity 1s;">
+                            <h3 class="message-title h6" style="font-family: 'Poppins', sans-serif; color: #001f3f;">Message from Registrar</h3>
+                            <img src="{% static 'img/Prof-A-S-Ranadive.jpeg' %}" alt="Registrar" class="rounded-circle mb-2" width="60" height="60" style="border: 3px solid #001f3f;">
+                            <h6 style="color: #001f3f; font-weight: bold;">Prof. A.S. Ranadive</h6>
+                            <p class="message-text mb-2" style="font-size: 0.9rem;">Welcome to our vibrant learning community. As the Registrar, I'm here to ensure your administrative journey is smooth. From enrollment to graduation, our office is committed to providing you with exceptional support throughout your academic career.</p>
+                        </div>
+                        <div class="message-box p-3" style="position: absolute; opacity: 0; transition: opacity 1s;">
+                            <h3 class="message-title h6" style="font-family: 'Poppins', sans-serif; color: #001f3f;">Message from Director</h3>
+                            <img src="{% static 'img/ProfManishSirDirCDOE.jpeg' %}" alt="Director" class="rounded-circle mb-2" width="60" height="60" style="border: 3px solid #001f3f;">
+                            <h6 style="color: #001f3f; font-weight: bold;">Prof. Manish Shrivastava</h6>
+                            <p class="message-text mb-2" style="font-size: 0.9rem;">At our Centre, we believe in the power of flexible learning. Our dedicated team of educators and support staff are here to guide you through your educational journey. We look forward to helping you achieve your academic and professional goals.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<section id="notifications" class="notifications-section py-5" style="background-color: #f4f8fb; margin-top: 2rem;">
+    <div class="container">
+        <h2 class="section-title text-center mb-5" style="font-family: 'Poppins', sans-serif; color: #001f3f; font-weight: 600;">Notifications</h2>
+        <div class="row g-4">
+            <!-- Job Notifications -->
+            <div class="col-md-4">
+                <div class="notification-card shadow-lg" style="background-color: #ffffff; border-radius: 15px; height: 350px; overflow: hidden;">
+                    <div class="notification-header text-center py-3" style="background-color: #001f3f; border-radius: 15px 15px 0 0;">
+                        <h4 style="color: #ffffff; font-family: 'Poppins', sans-serif; font-weight: 600;">Job Notifications</h4>
+                    </div>
+                    <div class="notification-content px-4 py-3" style="height: 280px; overflow: hidden; position: relative;">
+                        <ul class="notification-list list-unstyled mb-0" id="job-notifications">
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Job opening for Software Engineer at Infosys.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Walk-in interview for Data Analyst on Dec 10, 2024.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Hiring for Project Manager roles at TCS.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Applications open for Government Bank Clerk positions.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Internship opportunities at Wipro for freshers.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chhattisgarh Notifications -->
+            <div class="col-md-4">
+                <div class="notification-card shadow-lg" style="background-color: #ffffff; border-radius: 15px; height: 350px; overflow: hidden;">
+                    <div class="notification-header text-center py-3" style="background-color: #001f3f; border-radius: 15px 15px 0 0;">
+                        <h4 style="color: #ffffff; font-family: 'Poppins', sans-serif; font-weight: 600;">Chhattisgarh Notifications</h4>
+                    </div>
+                    <div class="notification-content px-4 py-3" style="height: 280px; overflow: hidden; position: relative;">
+                        <ul class="notification-list list-unstyled mb-0" id="chhattisgarh-notifications">
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">New state government scholarships announced for students.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Chhattisgarh Public Service Exam registration ends Nov 30.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Special drive for tribal employment opportunities.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Workshop on Organic Farming for farmers on Nov 25, 2024.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Chhattisgarh Tourism event on Dec 5, 2024.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other Notifications -->
+            <div class="col-md-4">
+                <div class="notification-card shadow-lg" style="background-color: #ffffff; border-radius: 15px; height: 350px; overflow: hidden;">
+                    <div class="notification-header text-center py-3" style="background-color: #001f3f; border-radius: 15px 15px 0 0;">
+                        <h4 style="color: #ffffff; font-family: 'Poppins', sans-serif; font-weight: 600;">Other Notifications</h4>
+                    </div>
+                    <div class="notification-content px-4 py-3" style="height: 280px; overflow: hidden; position: relative;">
+                        <ul class="notification-list list-unstyled mb-0" id="other-notifications">
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Upcoming webinar on Career Counseling on Nov 20, 2024.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">National level quiz competition starts on Dec 1, 2024.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Diwali vacation for all schools begins on Oct 25, 2024.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Blood donation camp organized on Dec 10, 2024.</li>
+                            <li class="py-2" style="font-family: 'Roboto', sans-serif; font-size: 0.9rem; color: #333;">Workshop on Digital Marketing for students on Nov 28, 2024.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<section id="about" class="py-5 about-section">
+    <div class="container">
+        <h2 class="text-center mb-5 section-title" style="color: #001f3f; font-weight: bold;">About Swavalambi Chhattisgarh</h2>
+        <div class="row mb-4 about-content" style="text-align: justify;">
+            <div class="col-md-6">
+                <p style="font-size: 1.1rem; color: #333;">Swavalambi Chhattisgarh is an initiative dedicated to promoting self-reliance and empowerment among the people of Chhattisgarh. Our mission is to create sustainable opportunities for individuals, especially those in rural and underrepresented areas, to gain access to education, skill development, and economic empowerment.</p>
+                <p style="font-size: 1.1rem; color: #333;">Through strategic partnerships, skill-building workshops, and leveraging local resources, we strive to make Chhattisgarh a state known for its resilient communities. Swavalambi Chhattisgarh believes in the power of knowledge, collaboration, and entrepreneurship to uplift the community and foster growth.</p>
+            </div>
+            <div class="col-md-6">
+                <img src="{% static 'img/Swalambhi-Chhattisgarh.png' %}" alt="Swavalambi Chhattisgarh" class="img-fluid rounded shadow-sm" style="border-radius: 10px;">
+            </div>
+        </div>
+        <div class="row">
+            <!-- Skill Development Feature -->
+            <div class="col-md-4 mb-4">
+                <div class="text-center feature-box shadow-sm" style="border-radius: 10px; padding: 20px; background: #ffffff; border: 1px solid #e0e0e0;">
+                    <i class="fas fa-tools feature-icon fa-3x mb-3" style="color: #001f3f;"></i>
+                    <h3 class="h5 feature-title" style="color: #001f3f; font-weight: bold;">Skill Development Programs</h3>
+                    <p style="color: #666;">Providing hands-on training in diverse fields to enhance the skills of our community members and empower them to be self-reliant.</p>
+                </div>
+            </div>
+            <!-- Women Empowerment Feature -->
+            <div class="col-md-4 mb-4">
+                <div class="text-center feature-box shadow-sm" style="border-radius: 10px; padding: 20px; background: #ffffff; border: 1px solid #e0e0e0;">
+                    <i class="fas fa-hand-holding-heart feature-icon fa-3x mb-3" style="color: #001f3f;"></i>
+                    <h3 class="h5 feature-title" style="color: #001f3f; font-weight: bold;">Women Empowerment</h3>
+                    <p style="color: #666;">Dedicated initiatives to support women entrepreneurs, promote financial independence, and provide education opportunities.</p>
+                </div>
+            </div>
+            <!-- Sustainable Agriculture Feature -->
+            <div class="col-md-4 mb-4">
+                <div class="text-center feature-box shadow-sm" style="border-radius: 10px; padding: 20px; background: #ffffff; border: 1px solid #e0e0e0;">
+                    <i class="fas fa-leaf feature-icon fa-3x mb-3" style="color: #001f3f;"></i>
+                    <h3 class="h5 feature-title" style="color: #001f3f; font-weight: bold;">Sustainable Agriculture</h3>
+                    <p style="color: #666;">Promoting eco-friendly farming practices that increase productivity, ensure food security, and protect the environment for future generations.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="marketplace" class="py-5">
+    <div class="container">
+        <!-- Section Titles -->
+        <h2 class="text-center mb-5 section-title" style="color: #001f3f; font-family: 'Poppins', sans-serif; font-weight: 700;">Our Products</h2>
+
+        <!-- Add arrows for scrolling -->
+        <div class="scroll-wrapper position-relative">
+             <div class="scroll-wrapper position-relative">
+        <button class="scroll-left position-absolute" style="left: 0; top: 50%; transform: translateY(-50%); background-color: rgba(0, 31, 63, 0.8); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 18px; transition: background-color 0.3s ease;">&#8249;</button>
+        <button class="scroll-right position-absolute" style="right: 0; top: 50%; transform: translateY(-50%); background-color: rgba(0, 31, 63, 0.8); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 18px; transition: background-color 0.3s ease;">&#8250;</button>
+            <!-- Products Section -->
+            <div class="scroll-container d-flex flex-nowrap product-section">
+
+  <!-- Product Card 1: Mushroom -->
+            {% for product in products %}
+                <div class="card item-card shadow" style="min-width: 300px; border: none; border-radius: 15px; overflow: hidden; background: linear-gradient(135deg, #ffffff, #f0f4ff);">
+                    <img src="/media/{{product.image}}" alt="Product Image" class="item-image" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h4 class="card-title">{{product.name}}</h4>
+                        <p class="card-text">{{product.desc}}</p>
+                        <p class="card-info">Department: {{product.department}}</p>
+                        <p class="card-price" style="color: #d40000; font-weight: bold;">₹{{product.price}}</p>
+                        <a href="#" class="btn btn-custom-buy mt-3" style="background-color: #001f3f; color: #ffffff; padding: 10px 20px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease-in-out;">Buy Now</a>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% comment %} <!-- Product Card 2: Pickle -->
+            <div class="card item-card shadow" style="min-width: 300px; border: none; border-radius: 15px; overflow: hidden; background: linear-gradient(135deg, #ffffff, #f0f4ff);">
+                <img src="{% static 'img/pickel.jpeg' %}" alt="Pickle" class="item-image" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h4 class="card-title">Spicy Mango Pickle</h4>
+                    <p class="card-text">Delicious and spicy homemade mango pickle, the perfect accompaniment to any meal.</p>
+                    <p class="card-info">Department: Condiments</p>
+                    <p class="card-price" style="color: #d40000; font-weight: bold;">₹150.00</p>
+                    <a href="#" class="btn btn-custom-buy mt-3" style="background-color: #001f3f; color: #ffffff; padding: 10px 20px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease-in-out;">Buy Now</a>
+                </div>
+            </div>
+
+            <!-- Product Card 3: Bread -->
+            <div class="card item-card shadow" style="min-width: 300px; border: none; border-radius: 15px; overflow: hidden; background: linear-gradient(135deg, #ffffff, #f0f4ff);">
+                <img src="{% static 'img/bread.jpeg' %}" alt="Bread" class="item-image" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h4 class="card-title">Whole Wheat Bread</h4>
+                    <p class="card-text">Freshly baked whole wheat bread, perfect for sandwiches or breakfast.</p>
+                    <p class="card-info">Department: Bakery</p>
+                    <p class="card-price" style="color: #d40000; font-weight: bold;">₹50.00</p>
+                    <a href="#" class="btn btn-custom-buy mt-3" style="background-color: #001f3f; color: #ffffff; padding: 10px 20px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease-in-out;">Buy Now</a>
+                </div>
+            </div>
+
+            <!-- Product Card 4: Cake -->
+            <div class="card item-card shadow" style="min-width: 300px; border: none; border-radius: 15px; overflow: hidden; background: linear-gradient(135deg, #ffffff, #f0f4ff);">
+                <img src="{% static 'img/cake.jpg' %}" alt="Cake" class="item-image" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h4 class="card-title">Chocolate Cake</h4>
+                    <p class="card-text">A rich and creamy chocolate cake, perfect for celebrations or a sweet treat.</p>
+                    <p class="card-info">Department: Bakery</p>
+                    <p class="card-price" style="color: #d40000; font-weight: bold;">₹499.99</p>
+                    <a href="#" class="btn btn-custom-buy mt-3" style="background-color: #001f3f; color: #ffffff; padding: 10px 20px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease-in-out;">Buy Now</a>
+                </div>
+            </div> {% endcomment %}
+                <!-- Repeat product cards as needed -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Jobs Section -->
+<section id="jobs" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 section-title" style="color: #001f3f; font-family: 'Poppins', sans-serif; font-weight: 700;">Our Job Opportunities</h2>
+
+        <!-- Scrollable Job Cards Section -->
+        <div class="scroll-wrapper position-relative">
+            <!-- Scroll Buttons -->
+            <button class="scroll-left position-absolute" style="left: 0; top: 50%; transform: translateY(-50%); background-color: rgba(0, 31, 63, 0.8); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 18px; transition: background-color 0.3s ease;" onclick="scrollContainer('#job-scroll-container', -300)">&#8249;</button>
+            <button class="scroll-right position-absolute" style="right: 0; top: 50%; transform: translateY(-50%); background-color: rgba(0, 31, 63, 0.8); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 18px; transition: background-color 0.3s ease;" onclick="scrollContainer('#job-scroll-container', 300)">&#8250;</button>
+
+            <div id="job-scroll-container" class="scroll-container d-flex flex-nowrap" style="gap: 20px; overflow-x: auto; padding: 20px 0; scroll-behavior: smooth;">
+                <!-- Job Card Template -->
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="job-icon mb-3">
+                            <i class="fas fa-laptop-code" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Software Developer</h4>
+                        <p class="card-text" style="color: #777;">TechnoBrains Solutions - Bengaluru, India</p>
+                        <p class="card-info" style="color: #d40000; font-weight: bold;">Salary: ₹6,00,000 - ₹9,00,000/year</p>
+                        <p class="card-requirements" style="color: #555;">3+ years in JavaScript, React, Node.js.</p>
+                        <a href="#" class="btn btn-custom-apply mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Apply Now</a>
+                    </div>
+                </div>
+                 <!-- Job Card Template -->
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="job-icon mb-3">
+                            <i class="fas fa-laptop-code" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Software Developer</h4>
+                        <p class="card-text" style="color: #777;">TechnoBrains Solutions - Bengaluru, India</p>
+                        <p class="card-info" style="color: #d40000; font-weight: bold;">Salary: ₹6,00,000 - ₹9,00,000/year</p>
+                        <p class="card-requirements" style="color: #555;">3+ years in JavaScript, React, Node.js.</p>
+                        <a href="#" class="btn btn-custom-apply mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Apply Now</a>
+                    </div>
+                </div>
+                 <!-- Job Card Template -->
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="job-icon mb-3">
+                            <i class="fas fa-laptop-code" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Software Developer</h4>
+                        <p class="card-text" style="color: #777;">TechnoBrains Solutions - Bengaluru, India</p>
+                        <p class="card-info" style="color: #d40000; font-weight: bold;">Salary: ₹6,00,000 - ₹9,00,000/year</p>
+                        <p class="card-requirements" style="color: #555;">3+ years in JavaScript, React, Node.js.</p>
+                        <a href="#" class="btn btn-custom-apply mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Apply Now</a>
+                    </div>
+                </div>
+                 <!-- Job Card Template -->
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="job-icon mb-3">
+                            <i class="fas fa-laptop-code" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Software Developer</h4>
+                        <p class="card-text" style="color: #777;">TechnoBrains Solutions - Bengaluru, India</p>
+                        <p class="card-info" style="color: #d40000; font-weight: bold;">Salary: ₹6,00,000 - ₹9,00,000/year</p>
+                        <p class="card-requirements" style="color: #555;">3+ years in JavaScript, React, Node.js.</p>
+                        <a href="#" class="btn btn-custom-apply mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Apply Now</a>
+                    </div>
+                </div>
+
+             <!-- Job Card Template -->
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="job-icon mb-3">
+                            <i class="fas fa-laptop-code" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Software Developer</h4>
+                        <p class="card-text" style="color: #777;">TechnoBrains Solutions - Bengaluru, India</p>
+                        <p class="card-info" style="color: #d40000; font-weight: bold;">Salary: ₹6,00,000 - ₹9,00,000/year</p>
+                        <p class="card-requirements" style="color: #555;">3+ years in JavaScript, React, Node.js.</p>
+                        <a href="#" class="btn btn-custom-apply mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Apply Now</a>
+                    </div>
+                </div>
+                <!-- Add additional job cards as needed -->
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="py-5">
+    <div class="container">
+        <h2 class="text-center mb-5 section-title" style="color: #001f3f; font-family: 'Poppins', sans-serif; font-weight: 700;">Our Professional Services</h2>
+
+        <!-- Scrollable Services Cards Section -->
+        <div class="scroll-wrapper position-relative">
+            <!-- Scroll Buttons -->
+            <button class="scroll-left position-absolute" style="left: 0; top: 50%; transform: translateY(-50%); background-color: rgba(0, 31, 63, 0.8); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 18px; transition: background-color 0.3s ease;" onclick="scrollContainer('#service-scroll-container', -300)">&#8249;</button>
+            <button class="scroll-right position-absolute" style="right: 0; top: 50%; transform: translateY(-50%); background-color: rgba(0, 31, 63, 0.8); color: white; border: none; padding: 15px; border-radius: 50%; cursor: pointer; z-index: 10; font-size: 18px; transition: background-color 0.3s ease;" onclick="scrollContainer('#service-scroll-container', 300)">&#8250;</button>
+
+            <div id="service-scroll-container" class="scroll-container d-flex flex-nowrap" style="gap: 20px; overflow-x: auto; padding: 20px 0; scroll-behavior: smooth;">
+                <!-- Service Card Template -->
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="service-icon mb-3">
+                            <i class="fas fa-chart-line" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Business Strategy Consulting</h4>
+                        <p class="card-text" style="color: #777;">Insightful consulting to grow your business strategically with tailored plans.</p>
+                        <p class="card-duration" style="color: #555;">Duration: Customizable</p>
+                        <a href="#" class="btn btn-custom-service mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Get Consultation</a>
+                    </div>
+                </div>
+
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="service-icon mb-3">
+                            <i class="fas fa-chart-line" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Business Strategy Consulting</h4>
+                        <p class="card-text" style="color: #777;">Insightful consulting to grow your business strategically with tailored plans.</p>
+                        <p class="card-duration" style="color: #555;">Duration: Customizable</p>
+                        <a href="#" class="btn btn-custom-service mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Get Consultation</a>
+                    </div>
+                </div>
+
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="service-icon mb-3">
+                            <i class="fas fa-chart-line" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Business Strategy Consulting</h4>
+                        <p class="card-text" style="color: #777;">Insightful consulting to grow your business strategically with tailored plans.</p>
+                        <p class="card-duration" style="color: #555;">Duration: Customizable</p>
+                        <a href="#" class="btn btn-custom-service mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Get Consultation</a>
+                    </div>
+                </div>
+
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="service-icon mb-3">
+                            <i class="fas fa-chart-line" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Business Strategy Consulting</h4>
+                        <p class="card-text" style="color: #777;">Insightful consulting to grow your business strategically with tailored plans.</p>
+                        <p class="card-duration" style="color: #555;">Duration: Customizable</p>
+                        <a href="#" class="btn btn-custom-service mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Get Consultation</a>
+                    </div>
+                </div>
+
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="service-icon mb-3">
+                            <i class="fas fa-chart-line" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Business Strategy Consulting</h4>
+                        <p class="card-text" style="color: #777;">Insightful consulting to grow your business strategically with tailored plans.</p>
+                        <p class="card-duration" style="color: #555;">Duration: Customizable</p>
+                        <a href="#" class="btn btn-custom-service mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Get Consultation</a>
+                    </div>
+                </div>
+                <div class="card item-card shadow" style="min-width: 300px; border-radius: 15px; background: linear-gradient(135deg, #f9f9f9, #e9ecef); transition: transform 0.3s ease;">
+                    <div class="card-body text-center">
+                        <div class="service-icon mb-3">
+                            <i class="fas fa-chart-line" style="font-size: 40px; color: #001f3f;"></i>
+                        </div>
+                        <h4 class="card-title" style="color: #001f3f; font-weight: bold;">Business Strategy Consulting</h4>
+                        <p class="card-text" style="color: #777;">Insightful consulting to grow your business strategically with tailored plans.</p>
+                        <p class="card-duration" style="color: #555;">Duration: Customizable</p>
+                        <a href="#" class="btn btn-custom-service mt-3" style="background-color: #001f3f; color: #fff; padding: 12px 25px; border-radius: 30px; font-weight: 600; text-decoration: none; transition: background-color 0.3s ease;">Get Consultation</a>
+                    </div>
+                </div>
+                <!-- Add additional service cards as needed -->
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
