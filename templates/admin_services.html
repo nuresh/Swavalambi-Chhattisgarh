@@ -16,8 +16,8 @@
                     <th>Description</th>
                     <th>Duration</th>
                     <th>Price</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    {% comment %} <th>Status</th>
+                    <th>Actions</th> {% endcomment %}
                 </tr>
             </thead>
             <tbody>
@@ -29,7 +29,7 @@
                     <td>{{ service.desc}}</td>
                     <td>{{ service.duration }}</td>
                     <td>{{ service.price }}</td>
-                    <td>{{ service.is_approved|yesno:"Yes,No" }}</td>
+                    {% comment %} <td>{{ service.is_approved|yesno:"Yes,No" }}</td>
                     <td>
                         
                             <div class="d-flex justify-content-between">
@@ -48,7 +48,7 @@
                                     </form>
                                 {% endif %}
                             </div>
-                    </td>
+                    </td> {% endcomment %}
                 </tr>
                 {% empty %}
                 <tr>

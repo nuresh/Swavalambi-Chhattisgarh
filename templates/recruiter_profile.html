@@ -42,7 +42,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="hrmobile" class="form-label">HR Phone Number</label>
-                        <input type="tel" class="form-control" id="hrmobile" name="hrmobile" value="{{ hr_mobile }}" placeholder="Enter HR Phone Number">
+                        <input type="tel" class="form-control" id="hrmobile" name="hrmobile" value="{{ hr_mobile|default:"" }}" placeholder="Enter HR Phone Number">
                     </div>
                     <div class="mb-3">
                         <label for="address" class="form-label">Industry Address</label>

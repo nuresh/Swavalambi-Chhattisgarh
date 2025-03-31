@@ -2,6 +2,7 @@
 {% load static %}
 {% block content %}
 
+<!-- Display Messages -->
 {% if messages %}
     <div class="container mt-3">
         {% for message in messages %}
@@ -19,7 +20,7 @@
     <div class="card shadow-lg p-4" style="width: 100%; max-width: 400px;">
         <h3 class="text-center mb-4">Register</h3>
 
-        {% if step == 'registration' %}
+        {% if step == 'registration' or step is None %}
         <!-- Registration Form -->
         <form method="POST">
             {% csrf_token %}
@@ -27,15 +28,14 @@
 
             <div class="mb-3">
                 <label for="user_type" class="form-label">Choose User Type:</label>
-                <select class="form-control" id="user_type" name="user_type" required>
+                <select class="form-control" id="user_type" name="user_type" required onchange="updateLabel()">
                     <option value="student">Student</option>
-                    {% comment %} <option value="department">Department</option> {% endcomment %}
                     <option value="recruiter">Recruiter</option>
                 </select>
             </div>
 
             <div class="mb-3">
-                <label for="name" class="form-label">Full Name</label>
+                <label for="name" class="form-label" id="nameLabel">Full Name</label>
                 <input type="text" class="form-control" id="name" name="name" placeholder="Enter your name" required>
             </div>
 
@@ -80,4 +80,19 @@
     </div>
 </div>
 
+<script>
+    function updateLabel() {
+        let userType = document.getElementById("user_type").value;
+        let nameLabel = document.getElementById("nameLabel");
+        let nameInput = document.getElementById("name");
+
+        if (userType === "recruiter") {
+            nameLabel.textContent = "Company Name";
+            nameInput.placeholder = "Enter your company name";
+        } else {
+            nameLabel.textContent = "Full Name";
+            nameInput.placeholder = "Enter your full name";
+        }
+    }
+</script>
 {% endblock %}

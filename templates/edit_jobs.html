@@ -1,0 +1,82 @@
+{% extends 'recruiter.html' %}
+{% load static %}
+{% block recruitercontent %}
+       
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container d-flex justify-content-center align-items-center m-2">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h3 class="text-center mb-4">Edit Job</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="job_id" value="{{ job.id }}">
+
+            <!-- Job Title -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Job Title</label>
+                <input type="text" class="form-control" id="title" name="title" value="{{ job.job_title }}" required>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="desc" class="form-label">Description</label>
+                <textarea class="form-control" id="desc" name="desc" rows="3">{{ job.job_description }}</textarea>
+            </div>
+
+            <!-- Location -->
+            <div class="mb-3">
+                <label for="location" class="form-label">Location</label>
+                <input type="text" class="form-control" id="location" name="location" value="{{ job.job_location }}">
+            </div>
+
+            <!-- Job Type -->
+            <div class="mb-3">
+                <label for="type" class="form-label">Job Type</label>
+                <input type="text" class="form-control" id="type" name="type" value="{{ job.job_type }}">
+            </div>
+
+            <!-- Experience -->
+            <div class="mb-3">
+                <label for="exp" class="form-label">Experience</label>
+                <input type="text" class="form-control" id="exp" name="exp" value="{{ job.job_experience }}">
+            </div>
+
+            <!-- Salary -->
+            <div class="mb-3">
+                <label for="salary" class="form-label">Salary</label>
+                <input type="text" class="form-control" id="salary" name="salary" value="{{ job.job_salary }}">
+            </div>
+
+            <!-- Skills -->
+            <div class="mb-3">
+                <label for="skill" class="form-label">Skills</label>
+                <input type="text" class="form-control" id="skill" name="skill" value="{{ job.job_skills }}">
+            </div>
+
+            <!-- Enabled Checkbox -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="enabled" name="enabled" {% if job.enabled %}checked{% endif %}>
+                <label class="form-check-label" for="enabled">Enabled</label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+            <a href="{% url 'recruiter_jobs' %}" class="btn btn-secondary w-100 mt-2">Cancel</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

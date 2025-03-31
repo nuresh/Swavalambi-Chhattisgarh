@@ -1,0 +1,42 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block admincontent %}
+<div class="container-fluid p-4">
+    <h1 class="mt-4">Welcome to the Admin Dashboard</h1>
+
+    <!-- List Page -->
+    <div class="mt-4">
+        <h2>Application List</h2>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Recruiter</th>
+                    <th>Job Title</th>
+                    <th>Student Name</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for application in applications %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ application.job.recruiter.name }}</td>
+                    <td>{{ application.job.job_title }}</td>
+                    <td>{{ application.student.name }}</td>
+                    <td>{{ application.student.mobile }}</td>
+                    <td>{{ application.student.user.email }}</td>
+                    <td>{{ application.application_status }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No applications found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

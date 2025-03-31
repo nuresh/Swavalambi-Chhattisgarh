@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice
+from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice, CallbackRequest
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
@@ -10,12 +10,14 @@ import random
 from django.core.mail import send_mail
 from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
+from django.utils import timezone
 
 
 
 def index(request):
     products = Product.objects.filter(enabled=True).select_related('department').order_by('-id')
     services = Service.objects.filter(enabled=True).select_related('department').order_by('-id')
+    jobs = Job.objects.filter(enabled=True, is_approved=True).select_related('recruiter').order_by('-job_posted_on')
     latest_news = Notice.objects.filter(enabled=True).order_by('-id')
     student_count = Student.objects.count()
     recruiter_count = Recruiter.objects.count()
@@ -50,11 +52,27 @@ def index(request):
             'concerened_person': service.department.concerened_person,
             'phone_number': service.department.phone_number,
         })
-
+    
+    # Extract job details
+    job_details = []
+    for job in jobs:
+        job_details.append({
+            'id': job.id,
+            'job_title': job.job_title,
+            'company_name': job.recruiter.name,
+            'job_description': job.job_description, 
+            'job_location': job.job_location,
+            'job_experience': job.job_experience,
+            'job_salary': job.job_salary,
+            'job_skills': job.job_skills,
+            'job_min_qualification': job.job_min_qualification,
+            'is_approved': job.is_approved,
+        })
 
     context = {
         'products':product_details,
         'services':service_details,
+        'jobs': job_details,
         'latest_news':latest_news,
         'student_count':student_count,
         'recruiter_count':recruiter_count,
@@ -63,6 +81,33 @@ def index(request):
     }
 
     return render(request, 'index.html', context)
+
+def request_callback(request):
+    if request.method == "POST":
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        mobile = request.POST.get('mobile')
+        product_id = request.POST.get('product_id')
+        service_id = request.POST.get('service_id')
+
+        product = Product.objects.get(id=product_id) if product_id else None
+        service = Service.objects.get(id=service_id) if service_id else None
+
+        department = None
+        if product:
+            department = product.department
+        elif service:
+            department = service.department
+
+        CallbackRequest.objects.create(
+            name=name, email=email, mobile=mobile, product=product, service=service, department=department
+        )
+
+        # messages.success(request, "Your callback request has been submitted!")
+        return redirect("index")  # Redirect to home or any success page
+
+    return redirect("index")  # Redirect if accessed directly
+
 
 otp_storage = {}
 
@@ -130,7 +175,8 @@ def register(request):
                         email=registration_data['email'],
                         password=registration_data['password']
                     )
-                    user.is_active = False  # Activate user upon OTP verification
+                    if registration_data['user_type'] == 'recruiter':
+                        user.is_active = False  
                     user.save()
 
                     # Create additional records based on user type
@@ -140,10 +186,10 @@ def register(request):
 
                     if user_type == 'student':
                         Student.objects.create(user=user, name=name, phone_number=mobile)
-                    elif user_type == 'department':
-                        Department.objects.create(user=user, department_name=name, phone_number=mobile)
+                    # elif user_type == 'department':
+                    #     Department.objects.create(user=user, department_name=name, phone_number=mobile)
                     elif user_type == 'recruiter':
-                        Recruiter.objects.create(user=user, name=name, phone_number=mobile)
+                        Recruiter.objects.create(user=user, name=name, company_phone_number=mobile)
 
                     messages.success(request, "Registration successful! Please login.")
                     return redirect('login')
@@ -178,6 +224,20 @@ def login_view(request):
                 return redirect('login')  # No role found, return to login page
 
         else:
+            try:
+                user = User.objects.get(email=email)
+                if not user.is_active:
+                    return render(request, 'login.html', {
+                        'error': 'Your account is not active. Please contact the admin.',
+                        'admin_contact': {
+                            'name': 'Admin Name',
+                            'email': 'admin@example.com',
+                            'phone': '+91 9876543210'
+                        }
+                    })
+            except User.DoesNotExist:
+                pass  # If user does not exist, continue with invalid credentials message
+
             return render(request, 'login.html', {'error': 'Invalid credentials'})
     
     return render(request, 'login.html')
@@ -208,41 +268,58 @@ def admin_dashboard(request):
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
 def admin_profile(request):
-    # Check if the user is an admin (either staff user or custom admin model)
-    if not (request.user.is_staff or hasattr(request.user, 'admin')):
-        return redirect('login')  # If not an admin, redirect to login
+    # Ensure only recruiters can access this page
+    try:
+        recruiter = Recruiter.objects.get(user=request.user)
+    except Recruiter.DoesNotExist:
+        messages.error(request, "Profile not found.")
+        return redirect("login")  
 
-    if request.method == 'POST':
-        # Get the logged-in admin user
-        admin_user = request.user
-
+    if request.method == "POST":
         # Retrieve data from the POST request
-        # name = request.POST.get('name')
-        # email = request.POST.get('email')
-        password = request.POST.get('password')
+        hr_name = request.POST.get("hrname")
+        hr_mail = request.POST.get("hremail")
+        hr_mobile = request.POST.get("hrmobile")
+        address = request.POST.get("address")
+        gst = request.POST.get("gst")
+        industry_type = request.POST.get("industrytype")
+        company_phone_number = request.POST.get("companyphonenumber")
+        password = request.POST.get("password")
 
-        # Update admin user details
-        # if name:
-        #     admin_user.first_name = name
-        # if email:
-        #     admin_user.email = email
-        #     admin_user.username = email  # Assuming email is also used as the username
+        # Update recruiter details
+        recruiter.hr_name = hr_name
+        recruiter.hr_mail = hr_mail
+        recruiter.hr_mobile = hr_mobile
+        recruiter.address = address
+        recruiter.gst = gst
+        recruiter.industry_type = industry_type
+        recruiter.company_phone_number = company_phone_number
+        recruiter.save()
+
+        # If password is provided, update the user's password
         if password:
-            admin_user.set_password(password)
+            request.user.set_password(password)
+            request.user.save()
 
-        admin_user.save()
+        messages.success(request, "Profile updated successfully.")
+        return redirect("admin_profile")
 
-        # Show a success message
-        messages.success(request, 'Profile updated successfully.')
-
-        # Redirect to avoid re-submitting form on page refresh
-        return redirect('admin_profile')
-
-    # Send admin name and email to the template
-    return render(request, 'admin_profile.html', {
-        'name': request.user.first_name,
-        'email': request.user.email,
-    })
+    # Render the template with recruiter details
+    return render(
+        request,
+        "recruiter_profile.html",
+        {
+            "name": recruiter.name,
+            "email": recruiter.user.email,
+            "hr_name": recruiter.hr_name,
+            "hr_mail": recruiter.hr_mail,
+            "hr_mobile": recruiter.hr_mobile,
+            "address": recruiter.address,
+            "gst": recruiter.gst,
+            "industry_type": recruiter.industry_type,
+            "company_phone_number": recruiter.company_phone_number,
+        },
+    )
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
@@ -259,37 +336,90 @@ def admin_users(request):
         action = request.POST.get('action')
         user = get_object_or_404(User, id=user_id)
         
+        subject = ""
+        message = ""
+        admin_contact = {
+        'name': 'Admin Name',
+        'email': 'admin@example.com',
+        'phone': '+91 9876543210'
+        }
+
+
         # Handle actions based on the button clicked
         if action == 'approve':
             user.is_active = True
             user.save()
+            subject = "Account Approved"
+            message = f"Dear {user.username},\n\nYour account has been approved. You can now log in.\n\nThank you!"
         elif action == 'reject':
             user.delete()
+            subject = "Account Rejected"
+            message = f"""Dear {user.username},
+
+                We regret to inform you that your account has been deleted. If you believe this was a mistake or need further assistance, please contact our admin.
+
+                Admin Contact Details:
+                - Name: {admin_contact['name']}
+                - Email: {admin_contact['email']}
+                - Phone: {admin_contact['phone']}
+
+                Regards,
+                Admin Team
+                """
+            user.delete()  # Delete the user after sending the message
         elif action == 'delete':
-            user.delete()
+            subject = "Account Deleted"
+            message = f"""Dear {user.username},
+
+                We regret to inform you that your account has been deleted. If you believe this was a mistake or need further assistance, please contact our admin.
+
+                Admin Contact Details:
+                - Name: {admin_contact['name']}
+                - Email: {admin_contact['email']}
+                - Phone: {admin_contact['phone']}
+
+                Regards,
+                Admin Team
+                """
+            user.delete()  # Delete the user after sending the message
+
+        # Send email notification if subject and message are set
+        if subject and message:
+            send_mail(
+                subject,
+                message,
+                settings.DEFAULT_FROM_EMAIL,  # Sender's email (should be set in settings.py)
+                [user.email],  # Receiver's email
+                fail_silently=False,  # Raise error if sending fails
+            )
 
         return redirect('admin_users')
 
     for user in users:
         user_type = None
         name = None
+        user_id = None
 
         # Determine the user type and fetch the respective name
         if hasattr(user, 'student'):
             user_type = 'Student'
             name = user.student.name
+            user_id = user.student.id
         elif hasattr(user, 'department'):
             user_type = 'Department'
             name = user.department.department_name
+            user_id = user.department.id
         elif hasattr(user, 'recruiter'):
             user_type = 'Recruiter'
             name = user.recruiter.name
+            user_id = user.recruiter.id
         else:
             user_type = 'Admin'
             name = user.username  # Default to username if no specific name field is found
 
         user_details.append({
             'id': user.id,
+            'user_id':user_id,
             'name': name,
             'email': user.email,
             'is_active': user.is_active,
@@ -301,12 +431,113 @@ def admin_users(request):
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
+def edit_departments(request):
+     # Ensure only admin users can access
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')
+
+    # Get the logged-in user
+    admin_user = request.user
+
+    if request.method == "POST": 
+        department_id = request.POST.get('department_id')
+
+        try:
+            department = Department.objects.get(id=department_id)
+        except Department.DoesNotExist:
+            messages.error(request, "Department not found.")
+            return redirect('admin_users')
+
+        # Update department fields
+        hod = request.POST.get('hod')
+        concerened_person = request.POST.get('concerened_person')
+        phone_number = request.POST.get('phone')
+        password = request.POST.get('password')
+
+        if password:
+            department.user.set_password(password)
+        department.user.save()
+
+        # Update Department model fields
+        if hod:
+            department.head_of_department = hod
+        if concerened_person:
+            department.concerened_person = concerened_person
+        if phone_number:
+            department.phone_number = phone_number
+        department.save()
+
+        # Show a success message
+        messages.success(request, 'Department updated successfully.')
+
+        # Redirect to avoid re-submitting form on page refresh
+        return redirect(f"{reverse('edit_departments')}?department_id={department.id}")
+
+    else:
+        department_id = request.GET.get('department_id')
+
+        try:
+            department = Department.objects.get(id=department_id)
+        except Department.DoesNotExist:
+            messages.error(request, "Department not found.")
+            return redirect('admin_users')
+
+
+    # # # Re-fetch the updated data after saving (ensure the latest values are passed)
+    department.refresh_from_db()
+    admin_user.refresh_from_db()
+    
+    # Send user and department data to the template
+    return render(request, 'edit_departments.html', {'department':department})
+
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def add_departments(request):
+    # Ensure only admin users can access
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')
+
+    if request.method == 'POST':
+        department_name = request.POST['department_name']
+        email = request.POST['email']
+        concerened_person = request.POST['concerened_person']
+        head_of_department = request.POST['hod']
+        phone_number = request.POST['phone']
+        password = request.POST['password']
+
+        # Check if email already exists
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "An account with this email already exists.")
+            return redirect('add_departments')
+
+        # Create User First
+        user = User.objects.create_user(username=email, email=email, password=password)
+
+        # Now, create the Department and link the user
+        department = Department.objects.create(
+            user=user,  
+            department_name=department_name,
+            concerened_person=concerened_person,
+            head_of_department=head_of_department,
+            phone_number=phone_number
+        )
+
+        messages.success(request, "Department added successfully!")
+        return redirect('add_departments')  
+
+    return render(request, 'add_departments.html')
+
+
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
 def admin_products(request):
     # Check if the user is an admin (either staff user or custom admin model)
     if not (request.user.is_staff or hasattr(request.user, 'admin')):
         return redirect('login')  # If not an admin, redirect to login
 
-    products = Product.objects.filter(is_rejected = False).order_by('-id')
+    products = Product.objects.filter().order_by('-id')
     
     if request.method == 'POST':
         product_id = request.POST.get('product_id')
@@ -314,14 +545,14 @@ def admin_products(request):
         product = get_object_or_404(Product, id=product_id)
         
         # Handle actions based on the button clicked
-        if action == 'approve':
-            product.is_approved = True
-            product.save()
-        elif action == 'reject':
-            product.is_rejected = True
-            product.save()
-        elif action == 'delete':
-            product.delete()
+        # if action == 'approve':
+        #     product.is_approved = True
+        #     product.save()
+        # elif action == 'reject':
+        #     product.is_rejected = True
+        #     product.save()
+        # elif action == 'delete':
+        #     product.delete()
 
         return redirect('admin_products')
 
@@ -334,7 +565,7 @@ def admin_services(request):
     if not (request.user.is_staff or hasattr(request.user, 'admin')):
         return redirect('login')  # If not an admin, redirect to login
 
-    services = Service.objects.filter(is_rejected = False).order_by('-id')
+    services = Service.objects.filter().order_by('-id')
     
     if request.method == 'POST':
         service_id = request.POST.get('service_id')
@@ -342,14 +573,14 @@ def admin_services(request):
         service = get_object_or_404(Service, id=service_id)
         
         # Handle actions based on the button clicked
-        if action == 'approve':
-            service.is_approved = True
-            service.save()
-        elif action == 'reject':
-            service.is_rejected = True
-            service.save()
-        elif action == 'delete':
-            service.delete()
+        # if action == 'approve':
+        #     service.is_approved = True
+        #     service.save()
+        # elif action == 'reject':
+        #     service.is_rejected = True
+        #     service.save()
+        # elif action == 'delete':
+        #     service.delete()
 
         return redirect('admin_services')
 
@@ -382,6 +613,28 @@ def admin_jobs(request):
         return redirect('admin_jobs')
 
     return render(request, 'admin_jobs.html', {'jobs': jobs})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def admin_requests(request,):
+    # Check if the user is an admin (either staff user or custom admin model)
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')  # If not an admin, redirect to login
+
+    requests = CallbackRequest.objects.filter().order_by('-id')
+
+    return render(request, 'admin_requests.html', {'requests': requests})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def job_students(request,):
+    # Check if the user is an admin (either staff user or custom admin model)
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')  # If not an admin, redirect to login
+
+    applications = Applications.objects.filter().order_by('-id')
+
+    return render(request, 'job_students.html', {'applications': applications})
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
@@ -423,9 +676,10 @@ def department_profile(request):
     
     if request.method == 'POST':
         # Retrieve data from the POST request
-        department_name = request.POST.get('department_name')
-        concerened_person = request.POST.get('concerened_person')
+        # department_name = request.POST.get('department_name')
         hod = request.POST.get('hod')
+        concerened_person = request.POST.get('concerened_person')
+        phone_number = request.POST.get('phone')
         # email = request.POST.get('email')
         password = request.POST.get('password')
 
@@ -438,12 +692,12 @@ def department_profile(request):
         admin_user.save()
 
         # Update Department model fields
-        if department_name:
-            department.department_name = department_name
-        if concerened_person:
-            department.concerened_person = concerened_person
         if hod:
             department.head_of_department = hod
+        if concerened_person:
+            department.concerened_person = concerened_person
+        if phone_number:
+            department.phone_number = phone_number
         department.save()
 
         # Show a success message
@@ -460,8 +714,9 @@ def department_profile(request):
     return render(request, 'department_profile.html', {
         'email': admin_user.email,
         'department_name': department.department_name,
-        'concerened_person':department.concerened_person,
         'hod': department.head_of_department,
+        'concerened_person':department.concerened_person,
+        'phone_number':department.phone_number,
     })
 
 
@@ -831,7 +1086,41 @@ def delete_services(request):
         return redirect('department_services')
 
     return render(request, 'department_services.html')
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def department_requests(request,):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
     
+    try:
+        # Ensure the user is a department user
+        department = Department.objects.get(user=request.user)
+        print(f"Department found: {department.department_name}")
+    except Department.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+    requests = CallbackRequest.objects.filter(department=department).order_by('-id')
+
+    return render(request, 'department_requests.html', {'requests': requests})
+
+
+def complete_request(request, request_id):
+    if request.method == "POST":
+        callback_request = get_object_or_404(CallbackRequest, id=request_id)
+        callback_request.status = "completed"  # Change status to 'completed'
+        callback_request.save()
+        # messages.success(request, "Callback request marked as completed!")
+    return redirect("department_requests")  # Redirect to request list
+
+def delete_request(request, request_id):
+    if request.method == "POST":
+        callback_request = get_object_or_404(CallbackRequest, id=request_id)
+        callback_request.delete()
+        messages.success(request, "Callback request deleted successfully!")
+    return redirect("department_requests")  # Redirect to request list
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
@@ -909,38 +1198,70 @@ def student_profile(request):
             student.name = name
         if course_name:
             student.course_name = course_name
+        else:
+            student.course_name = ''
         if branch_name:
             student.branch_name = branch_name
+        else:
+            student.branch_name = ''
         if semester:
             student.semester = semester
+        else:
+            student.semester = None
         if enrollment_number:
             student.enrollment_number = enrollment_number
+        else:
+            student.enrollment_number = ''
         if roll_number:
             student.roll_number = roll_number
+        else:
+            student.roll_number = ''
         if gender:
             student.gender = gender
         if date_of_birth:
             student.date_of_birth = date_of_birth
+        else:
+            student.date_of_birth = None
         if course_starting_year:
             student.course_starting_year = course_starting_year
+        else:
+            student.course_starting_year = None
         if course_ending_year:
             student.course_ending_year = course_ending_year
+        else:
+            student.course_ending_year = None
         if profile_tagline:
             student.profile_tagline = profile_tagline
+        else:
+            student.profile_tagline = ''
         if profile_summary:
             student.profile_summary = profile_summary
+        else:
+            student.profile_summary = ''
         if experience:
             student.experience = experience
+        else:
+            student.experience = None
         if skills:
             student.skills = skills
+        else:
+            student.skills = ''
         if resume:
             student.resume = resume
+        else:
+            student.resume = ''
         if linkedin:
             student.linkedin = linkedin
+        else:
+            student.linkedin = ''
         if github:
             student.github = github
+        else:
+            student.github = ''
         if website:
             student.website = website
+        else:
+            student.website = ''
         if phone_number:
             student.phone_number = phone_number
         student.save()
@@ -954,11 +1275,11 @@ def student_profile(request):
     # Re-fetch the updated data after saving (ensure the latest values are passed)
     student.refresh_from_db()
     admin_user.refresh_from_db()
-
+    print(f"DEBUG: course_name = {student.course_name}") 
     # Send user and department data to the template
     return render(request, 'student_profile.html', {
         'name': student.name,
-        'course_name': student.course_name,
+        'course_name': student.course_name or '',
         'branch_name': student.branch_name,
         'semester': student.semester,
         'enrollment_number': student.enrollment_number,
@@ -998,15 +1319,17 @@ def student_jobs(request):
     if request.method == "POST":
         # Handle the "Apply" form submission
         job_id = request.POST.get('job_id')
-        student_id = request.POST.get('student_id')
-        if student_id == str(student.id):  # Validate the student making the request
-            try:
-                job = Job.objects.get(id=job_id)
-                # Check if the application already exists
-                if not Applications.objects.filter(student=student, job=job).exists():
-                    Applications.objects.create(student=student, job=job)
-            except Job.DoesNotExist:
-                pass  # Handle the case where the job does not exist
+        action = request.POST.get('action')  # "apply" or "withdraw"
+        
+        job = Job.objects.get(id=job_id)
+
+        if action == "apply":
+            Applications.objects.create(student=student, job=job)
+            messages.success(request, "Application submitted successfully.")
+        elif action == "withdraw":
+            Applications.objects.filter(student=student, job=job).delete()
+            messages.success(request, "You have withdrawn your application.")
+
         return redirect('student_jobs')  # Redirect back to the jobs page after applying
 
     # Fetch all jobs and applied jobs for the student
@@ -1016,6 +1339,29 @@ def student_jobs(request):
     return render(request, 'student_jobs.html', {
         'jobs': jobs,
         'student': student,
+        'applied_jobs': applied_jobs,
+    })
+
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def applied_jobs(request):
+    if request.user.is_staff:
+        # If the user is an admin, redirect them to the admin dashboard
+        return redirect('admin_dashboard')
+        
+    try:
+        # Ensure the user is a department user
+        student = Student.objects.get(user=request.user)
+        print(f"Student found: {student.name}")
+    except Student.DoesNotExist:
+        # If the user is not a department user, redirect to login or show an error
+        return redirect('login')  # Or show a message saying "You are not a department"
+
+
+    applied_jobs = Applications.objects.filter(student=student)
+
+    return render(request, 'applied_jobs.html', {
         'applied_jobs': applied_jobs,
     })
     
@@ -1191,8 +1537,8 @@ def add_jobs(request):
         exp = request.POST.get('exp')
         salary = request.POST.get('salary')
         skill = request.POST.get('skill')
-        post_date = request.POST.get('post_date')
-        email = request.POST.get('email')
+        # post_date = request.POST.get('post_date')
+        # email = request.POST.get('email')
         enabled = 'enabled' in request.POST  # Checkbox field
         
                 
@@ -1205,8 +1551,8 @@ def add_jobs(request):
             job_experience=exp,
             job_salary=salary,
             job_skills=skill,
-            job_posted_on=post_date,
-            contact_email = email,
+            job_posted_on=timezone.now().date(),
+            # contact_email = email,
             enabled=enabled
         )
         job.save()
@@ -1244,9 +1590,9 @@ def edit_jobs(request):
         job.job_type = request.POST['type']
         job.job_experience = request.POST['exp']
         job.job_salary = request.POST['salary']
-        job.job_skils = request.POST['skill']
-        job.job_poted_on = request.POST['post_date']
-        job.contact_email = request.POST['email']
+        job.job_skills = request.POST['skill']
+        # job.job_poted_on = request.POST['post_date']
+        # job.contact_email = request.POST['email']
         job.enabled = 'enabled' in request.POST
 
        
@@ -1275,7 +1621,7 @@ def delete_jobs(request):
 
     try:
         # Ensure the user is a department user
-        recuiter = Recruiter.objects.get(user=request.user)
+        recruiter = Recruiter.objects.get(user=request.user)
     except Recruiter.DoesNotExist:
         return redirect('login')  # Redirect to login if the user is not part of a recruiter
 
@@ -1297,36 +1643,40 @@ def delete_jobs(request):
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
-def applied_jobs(request):
+def job_applications(request):
     if request.user.is_staff:
-        # If the user is an admin, redirect them to the admin dashboard
         return redirect('admin_dashboard')
     
     try:
-        # Ensure the user is a department user
         recruiter = Recruiter.objects.get(user=request.user)
-        print(f"Recruiter found: {recruiter.name}")
     except Recruiter.DoesNotExist:
-        # If the user is not a department user, redirect to login or show an error
-        return redirect('login')  # Or show a message saying "You are not a department"
+        return redirect('login')
 
-    # Get the logged-in user
-    admin_user = request.user
-    
-    # Fetch or create a Department entry for the current user
-    recruiter, created = Recruiter.objects.get_or_create(user=admin_user)
-    
-    jobs = Job.objects.filter(recruiter=recruiter).order_by('-id')
+    if request.method == "POST":
+        application_id = request.POST.get("application_id")
+        action = request.POST.get("action")
 
-    # Get all applications for the recruiter's jobs
-    applications = Applications.objects.filter(job__recruiter=recruiter).select_related('job', 'student')
+        application = get_object_or_404(Applications, id=application_id)
 
-    # Prepare the context data
-    context = {
+        if action == "accept":
+            application.application_status = "Approved"
+            messages.success(request, "Application accepted successfully!")
+        elif action == "reject":
+            application.application_status = "Rejected"
+            messages.error(request, "Application rejected!")
+        elif action == "withdraw":
+            application.application_status = "Pending"
+            messages.info(request, "Application status changed back to pending.")
+
+        application.save()
+        return redirect('job_applications')
+
+    # Fetch only pending and approved applications
+    applications = Applications.objects.filter(
+        job__recruiter=recruiter
+    ).exclude(application_status="Rejected").select_related("job", "student")
+
+    return render(request, 'job_applications.html', {
         'recruiter': recruiter,
-        'jobs': jobs,
         'applications': applications,
-    }
-
-    # Render the template
-    return render(request, 'applied_jobs.html', context)
+    })

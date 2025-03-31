@@ -26,11 +26,11 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" name="name" value="{{ name }}" placeholder="Enter your name">
+                        <input type="text" class="form-control" id="name" name="name" value="{{ name }}" placeholder="Enter your name" disabled>
                     </div>
                     <div class="mb-3">
                         <label for="cname" class="form-label">Course Name</label>
-                        <input type="text" class="form-control" id="cname" name="cname" value="{{ course_name }}" placeholder="Enter course name">
+                        <input type="text" class="form-control" id="cname" name="cname" value="{{ course_name}}" placeholder="Enter course name">
                     </div>
                     <div class="mb-3">
                         <label for="bname" class="form-label">Branch Name</label>
@@ -51,6 +51,7 @@
                     <div class="mb-3">
                         <label for="gender" class="form-label">Gender</label>
                         <select class="form-select" id="gender" name="gender">
+                            <option value="" disabled selected>Please select one</option>
                             <option value="Male" {% if gender == "Male" %}selected{% endif %}>Male</option>
                             <option value="Female" {% if gender == "Female" %}selected{% endif %}>Female</option>
                             <option value="ThirdGender" {% if gender == "ThirdGender" %}selected{% endif %}>Third Gender</option>

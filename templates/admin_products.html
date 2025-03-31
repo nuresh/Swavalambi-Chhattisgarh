@@ -16,8 +16,9 @@
                     <th>Description</th>
                     <th>Quantity</th>
                     <th>Price</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>Image</th>
+                    {% comment %} <th>Status</th>
+                    <th>Actions</th> {% endcomment %}
                 </tr>
             </thead>
             <tbody>
@@ -29,7 +30,11 @@
                     <td>{{ product.desc}}</td>
                     <td>{{ product.qty }}</td>
                     <td>{{ product.price }}</td>
-                    <td>{{ product.is_approved|yesno:"Yes,No" }}</td>
+                    <td><a href="#" data-bs-toggle="modal" data-bs-target="#imageModal" 
+                        data-bs-image="{{ product.image.url }}">
+                         View Image
+                     </a></td>
+                    {% comment %} <td>{{ product.is_approved|yesno:"Yes,No" }}</td>
                     <td>
                         
                             <div class="d-flex justify-content-between">
@@ -48,7 +53,7 @@
                                     </form>
                                 {% endif %}
                             </div>
-                    </td>
+                    </td> {% endcomment %}
                 </tr>
                 {% empty %}
                 <tr>
@@ -59,4 +64,30 @@
         </table>
     </div>
 </div>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="imageModalLabel">Product Image</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="modalImage" src="" class="img-fluid" alt="Product Image" style="border-radius: 0;">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var imageModal = document.getElementById("imageModal");
+        imageModal.addEventListener("show.bs.modal", function (event) {
+            var link = event.relatedTarget;  // Get the clicked link
+            var imageUrl = link.getAttribute("data-bs-image");  // Get image URL
+            document.getElementById("modalImage").src = imageUrl;  // Set image in modal
+        });
+    });
+</script>
 {% endblock %}

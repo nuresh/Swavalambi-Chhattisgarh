@@ -28,7 +28,7 @@ class Student(models.Model):
     name = models.CharField(max_length=100)
     course_name = models.CharField(max_length=100,null=True, blank=True)
     branch_name = models.CharField(max_length=100,null=True, blank=True)
-    semester = models.IntegerField(default=1,null=True, blank=True)
+    semester = models.IntegerField(null=True, blank=True)
     enrollment_number = models.CharField(max_length=30,null=True, blank=True)
     roll_number = models.CharField(max_length=30,null=True, blank=True)
     gender = models.CharField(max_length=30,null=True, blank=True)
@@ -39,22 +39,33 @@ class Student(models.Model):
     profile_summary = models.CharField(max_length=1000,null=True, blank=True)
     experience = models.IntegerField(null=True, blank=True)
     skills = models.CharField(max_length=1000,null=True, blank=True)
-    resume = models.CharField(max_length=1000,null=True, blank=True, default="")
-    linkedin = models.CharField(max_length=1000,null=True, blank=True, default="")
-    github = models.CharField(max_length=1000,null=True, blank=True, default="")
-    website = models.CharField(max_length=1000,null=True, blank=True, default="")
+    resume = models.CharField(max_length=1000,null=True, blank=True)
+    linkedin = models.CharField(max_length=1000,null=True, blank=True)
+    github = models.CharField(max_length=1000,null=True, blank=True)
+    website = models.CharField(max_length=1000,null=True, blank=True)
     phone_number = models.IntegerField()
 
     def __str__(self):
         return self.name
 
+    def clean_none_fields(self):
+        """Convert None values to empty strings before saving."""
+        for field in self._meta.fields:
+            if isinstance(field, models.CharField):
+                value = getattr(self, field.name)
+                if value is None:
+                    setattr(self, field.name, '')  # Convert None to empty string
+
+    def save(self, *args, **kwargs):
+        self.clean_none_fields()  # Ensure all CharFields are not None
+        super().save(*args, **kwargs)
 
 class Department(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     department_name = models.CharField(max_length=100)
     concerened_person = models.CharField(max_length=100,null=True, blank=True)
     head_of_department = models.CharField(max_length=100,null=True, blank=True)
-    phone_number = models.IntegerField()
+    phone_number = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return self.department_name
@@ -63,21 +74,39 @@ class Department(models.Model):
 class Recruiter(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=300)
-    hr_name = models.CharField(max_length=100)
-    hr_mail = models.CharField(max_length=100)
-    hr_mobile = models.IntegerField()
-    address = models.TextField(null=True, blank=True)
+    hr_name = models.CharField(max_length=100,null=True, blank=True)
+    hr_mail = models.CharField(max_length=100,null=True, blank=True)
+    hr_mobile = models.IntegerField(null=True, blank=True)
+    address = models.CharField(max_length=200,null=True, blank=True)
     gst = models.CharField(max_length=15,null=True, blank=True)
-    industry_type = models.CharField(max_length=40)
-    company_phone_number = models.IntegerField()
+    industry_type = models.CharField(max_length=40,null=True, blank=True)
+    company_phone_number = models.IntegerField(null=True, blank=True)
     
     def __str__(self):
         return self.name
+    
+    def clean_none_fields(self):
+        """Convert None values to empty strings for CharFields, and handle IntegerFields properly."""
+        for field in self._meta.fields:
+            value = getattr(self, field.name)
+
+            if isinstance(field, models.CharField) or isinstance(field, models.TextField):
+                if value is None:
+                    setattr(self, field.name, '')
+            elif isinstance(field, models.IntegerField):
+                if value is None:
+                    setattr(self, field.name, 0)  # Or keep it as None based on preference
+
+    def save(self, *args, **kwargs):
+        self.clean_none_fields()  # Ensure all CharFields are not None
+        super().save(*args, **kwargs)
+            
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100)
     AutoSlugField(populate_from='name', unique=True,null=True,default=None)
-    department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     qty =  models.IntegerField(null=True, blank=True)
     desc = models.CharField(max_length=500,null=True, blank=True)
     price = models.IntegerField(null=True, blank=True)
@@ -95,7 +124,7 @@ class Product(models.Model):
 class Service(models.Model):
     name = models.CharField(max_length=100)
     AutoSlugField(populate_from='name', unique=True,null=True,default=None)
-    department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
     duration = models.CharField(max_length=100,null=True, blank=True)
     desc = models.CharField(max_length=500,null=True, blank=True)
     price = models.IntegerField(null=True, blank=True)
@@ -108,18 +137,37 @@ class Service(models.Model):
     def __str__(self):
         return self.name
 
+class CallbackRequest(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+    ]
+
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    mobile = models.CharField(max_length=15)
+    product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, blank=True)
+    service = models.ForeignKey('Service', on_delete=models.SET_NULL, null=True, blank=True)
+    department = models.ForeignKey(Department, on_delete=models.PROTECT)
+    requested_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+
+    def __str__(self):
+        return self.name
+
 
 class Job(models.Model):
     recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE)
     job_title = models.CharField(max_length=200)
-    job_description = models.TextField()
-    job_location = models.CharField(max_length=200)
-    job_type = models.CharField(max_length=200)
-    job_experience = models.CharField(max_length=200)
-    job_salary = models.CharField(max_length=200)
-    job_skills = models.CharField(max_length=200)
+    job_description = models.TextField(null=True, blank=True)
+    job_location = models.CharField(max_length=200,null=True, blank=True)
+    job_type = models.CharField(max_length=200,null=True, blank=True)
+    job_experience = models.CharField(max_length=200,null=True, blank=True)
+    job_salary = models.CharField(max_length=200,null=True, blank=True)
+    job_skills = models.CharField(max_length=200,null=True, blank=True)
+    job_min_qualification = models.CharField(max_length=200,null=True, blank=True)
     job_posted_on = models.DateField(auto_now_add=True)
-    contact_email = models.EmailField()
+    # contact_email = models.EmailField()
     enabled = models.BooleanField(default=True,null=True)
     is_approved = models.BooleanField(default=False,null=True)
     is_rejected = models.BooleanField(default=False,null=True)
@@ -131,9 +179,14 @@ class Job(models.Model):
         verbose_name_plural = "Jobs"
 
 class Applications(models.Model):
+    STATUS_CHOICES = [
+        ('Pending', 'Pending'),
+        ('Approved', 'Approved'),
+        ('Rejected', 'Rejected'),
+    ]
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     job = models.ForeignKey(Job, on_delete=models.CASCADE)
-    application_status = models.CharField(max_length=200,default="Applied")
+    application_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
 
     def __str__(self):
         return self.job.job_title
@@ -160,7 +213,7 @@ class Notice(models.Model):
     name = models.CharField(max_length=300)
     notice_date = models.DateField(null=True)
     enabled = models.BooleanField(null=True)
-    file = models.FileField(upload_to=notice_file_upload_path,max_length=250, null=True, default=None,validators=[validate_file_size])
+    file = models.FileField(upload_to=notice_file_upload_path,max_length=250, null=True, blank=True, default=None,validators=[validate_file_size])
   
     def __str__(self):
         return self.name

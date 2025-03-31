@@ -1,6 +1,21 @@
 {% extends 'student.html' %}
 {% load static %}
 {% block studentcontent %}
+
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="container-fluid p-4">
     <h1 class="mt-4">Welcome to the Student Dashboard</h1>
 
@@ -13,12 +28,11 @@
                 <tr>
                     <th>#</th>
                     <th>Job Title</th>
-                    <th>Description</th>
+                    <th>Recruiter</th>
                     <th>Location</th>
-                    <th>Type</th>
                     <th>Expeience</th>
+                    <th>Minimum Qualification</th>
                     <th>Salary</th>
-                    <th>Skills</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -27,29 +41,86 @@
                 <tr>
                     <td>{{ forloop.counter }}</td>
                     <td>{{ job.job_title }}</td>
-                    <td>{{ job.job_description }}</td>
+                    <td>{{ job.recruiter.name }}</td>
                     <td>{{ job.job_location }}</td>
-                    <td>{{ job.job_type }}</td>
                     <td>{{ job.job_experience }}</td>
+                    <td>{{ job.job_min_qualification }}</td>
                     <td>{{ job.job_salary }}</td>
-                    <td>{{ job.job_skills }}</td>
                     <td>
-                        <div class="d-flex justify-content-center">
+                        <div class="d-flex justify-content-start">
+                            <!-- View Button -->
+                            <button class="btn btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#jobModal{{ job.id }}">View</button>
+
                             {% if job.id in applied_jobs %}
-                            <!-- If already applied -->
-                            <button class="btn btn-success btn-sm w-100" disabled>Applied</button>
+                                <form method="POST" action="{% url 'student_jobs' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="job_id" value="{{ job.id }}">
+                                    <input type="hidden" name="action" value="withdraw">
+                                    <button class="btn btn-danger btn-sm" type="submit">Withdraw</button>
+                                </form>
                             {% else %}
-                            <!-- If not applied -->
-                            <form method="POST" action="{% url 'apply_job' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="job_id" value="{{ job.id }}">
-                                <input type="hidden" name="student_id" value="{{ student.id }}">
-                                <button class="btn btn-primary btn-sm w-100" type="submit">Apply</button>
-                            </form>
+                                <form method="POST" action="{% url 'student_jobs' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="job_id" value="{{ job.id }}">
+                                    <input type="hidden" name="action" value="apply">
+                                    <button class="btn btn-primary btn-sm" type="submit">Apply</button>
+                                </form>
                             {% endif %}
                         </div>
                     </td>
                 </tr>
+                <!-- Bootstrap Modal for Job Details -->
+                <div class="modal fade" id="jobModal{{ job.id }}" tabindex="-1" aria-labelledby="jobModalLabel{{ job.id }}" aria-hidden="true">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">
+                                    <i class="fas fa-briefcase"></i> {{ job.job_title }}
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p><strong>Recruiter:</strong> {{ job.recruiter.name }}</p>
+                                <p><strong>Location:</strong> {{ job.job_location }}</p>
+                                <p><strong>Type:</strong> {{ job.job_type }}</p>
+                                <p><strong>Experience Required:</strong> {{ job.job_experience }}</p>
+                                <p><strong>Salary:</strong> {{ job.job_salary }}</p>
+                                <p><strong>Skills Required:</strong> {{ job.job_skills }}</p>
+                                <p><strong>Minimum Qualification:</strong> {{ job.job_min_qualification }}</p>
+                                <p><strong>Description:</strong> {{ job.job_description }}</p>
+
+                                <!-- Contact Details -->
+                                <div class="border rounded p-3 mb-3">
+                                    <h5>📞 Contact Recruiter:</h5>
+                                    <p>Name: <strong>{{ job.recruiter.hr_name }}</strong>
+                                    <p>Contact Number: <strong>{{ job.recruiter.hr_mobile }}</strong>
+                                    <p>Email: <strong>{{ job.recruiter.hr_mail }}</strong>
+                                </div>
+
+                                <!-- Apply Form Inside Modal -->
+                                {% if job.id in applied_jobs %}
+                                    <form method="POST" action="{% url 'student_jobs' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="job_id" value="{{ job.id }}">
+                                        <input type="hidden" name="action" value="withdraw">
+                                        <button type="submit" class="btn btn-danger w-100">Withdraw Application</button>
+                                    </form>
+                                {% else %}
+                                    <form method="POST" action="{% url 'student_jobs' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="job_id" value="{{ job.id }}">
+                                        <input type="hidden" name="action" value="apply">
+                                        <button type="submit" class="btn btn-success w-100">Apply Now</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% empty %}
                 <tr>
                     <td colspan="9" class="text-center">No jobs found.</td>

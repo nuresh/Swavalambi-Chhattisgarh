@@ -15,6 +15,10 @@
                     <th>Job Title</th>
                     <th>Description</th>
                     <th>Job Type</th>
+                    <th>Location</th>
+                    <th>Experience</th>
+                    <th>Skills</th>
+                    <th>Minimum Qualification</th>
                     <th>Salary</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -28,6 +32,10 @@
                     <td>{{ job.job_title}}</td>
                     <td>{{ job.job_description}}</td>
                     <td>{{ job.job_type }}</td>
+                    <td>{{ job.job_location }}</td>
+                    <td>{{ job.job_experience }}</td>
+                    <td>{{ job.job_skills }}</td>
+                    <td>{{ job.job_min_qualification }}</td>
                     <td>{{ job.job_salary }}</td>
                     <td>{{ job.is_approved|yesno:"Yes,No" }}</td>
                     <td>

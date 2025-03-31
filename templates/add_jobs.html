@@ -66,16 +66,16 @@
             </div>
 
             <!-- Job Potsed On -->
-            <div class="mb-3">
+            {% comment %} <div class="mb-3">
                 <label for="post_date" class="form-label">Job Posted On</label>
                 <input type="date" class="form-control" id="post_date" name="post_date" value="{{ job_posted_on |date:'Y-m-d' }}">
-            </div>
+            </div> {% endcomment %}
 
             <!-- Contact Email -->
-            <div class="mb-3">
+            {% comment %} <div class="mb-3">
                 <label for="email" class="form-label">Contact Email</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="Enter Contact Email">
-            </div>
+            </div> {% endcomment %}
 
             <!-- Enabled Checkbox -->
             <div class="form-check mb-3">

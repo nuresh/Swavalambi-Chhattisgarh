@@ -26,11 +26,7 @@
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="department_name" class="form-label">Department Name</label>
-                        <input type="text" class="form-control" id="department_name" name="department_name" value="{{department_name}}">
-                    </div>
-                    <div class="mb-3">
-                        <label for="concerened_person" class="form-label">Concerened Person</label>
-                        <input type="text" class="form-control" id="concerened_person" name="concerened_person" value="{{concerened_person}}">
+                        <input type="text" class="form-control" id="department_name" name="department_name" value="{{department_name}}" disabled>
                     </div>
                     <div class="mb-3">
                         <label for="hod" class="form-label">Head of the Department</label>
@@ -39,6 +35,14 @@
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" value="{{ email }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="concerened_person" class="form-label">Concerened Person</label>
+                        <input type="text" class="form-control" id="concerened_person" name="concerened_person" value="{{concerened_person}}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ phone_number }}" placeholder="Enter phone number">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>

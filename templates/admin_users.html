@@ -1,8 +1,29 @@
 {% extends 'admin.html' %}
 {% load static %}
 {% block admincontent %}
+
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <div class="container-fluid p-4">
     <h1 class="mt-4">Welcome to the Admin Dashboard</h1>
+
+    <div>
+        <a href="{% url 'add_departments' %}" class="btn btn-primary">
+            Add Department
+        </a>
+    </div>
 
     <!-- List Page -->
     <div class="mt-4">
@@ -15,7 +36,7 @@
                     <th>Email</th>
                     <th>Date Joined</th>
                     <th>User Type</th>
-                    <th>Status</th>
+                    {% comment %} <th>Status</th> {% endcomment %}
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -27,22 +48,45 @@
                     <td>{{ user.email }}</td>
                     <td>{{ user.date_joined|date:"Y-m-d H:i:s" }}</td>
                     <td>{{ user.user_type|default:"N/A" }}</td>
-                    <td>{{ user.is_active|yesno:"Yes,No" }}</td>
+                    {% comment %} <td>{{ user.is_active|yesno:"Yes,No" }}</td> {% endcomment %}
                     <td>
-                        {% if user.user_type != "admin" %}
+                        {% if user.user_type != "Admin" %}
                             <div class="d-flex justify-content-between">
-                                {% if not user.is_active %}
+                                {% if user.user_type == "Department" %}
+                                    <!-- Edit & Delete buttons for Department -->
+                                    <form method="GET" action="{% url 'edit_departments' %}" class="w-100 d-flex justify-content-between">
+                                        {% comment %} {% csrf_token %} {% endcomment %}
+                                        <input type="hidden" name="department_id" value="{{ user.user_id }}">
+                                        <input type="hidden" name="user_id" value="{{ user.id }}">
+                                        <button class="btn btn-warning btn-sm w-100 me-1" type="submit">Edit</button>
+                                    </form>
                                     <form method="POST" action="{% url 'admin_users' %}" class="w-100 d-flex justify-content-between">
                                         {% csrf_token %}
                                         <input type="hidden" name="user_id" value="{{ user.id }}">
-                                        <button class="btn btn-success btn-sm w-50 me-1" type="submit" name="action" value="approve">Approve</button>
-                                        <button class="btn btn-danger btn-sm w-50" type="submit" name="action" value="reject">Reject</button>
+                                        <button class="btn btn-danger btn-sm w-100" type="submit" name="action" value="delete">Delete</button>
                                     </form>
+                    
+                                {% elif user.user_type == "Recruiter" %}
+                                    <!-- Approve/Reject/Delete buttons for Recruiter -->
+                                    {% if not user.is_active %}
+                                        <form method="POST" action="{% url 'admin_users' %}" class="w-100 d-flex justify-content-between">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                                            <button class="btn btn-success btn-sm w-50 me-1" type="submit" name="action" value="approve">Approve</button>
+                                            <button class="btn btn-danger btn-sm w-50" type="submit" name="action" value="reject">Reject</button>
+                                        </form>
+                                    {% else %}
+                                        <form method="POST" action="{% url 'admin_users' %}" class="w-100 d-flex justify-content-center">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="user_id" value="{{ user.id }}">
+                                            <button class="btn btn-danger btn-sm w-100" type="submit" name="action" value="delete">Delete</button>
+                                        </form>
+                                    {% endif %}
                                 {% else %}
                                     <form method="POST" action="{% url 'admin_users' %}" class="w-100 d-flex justify-content-center">
                                         {% csrf_token %}
                                         <input type="hidden" name="user_id" value="{{ user.id }}">
-                                        <button class="btn btn-warning btn-sm w-100" type="submit" name="action" value="delete">Delete</button>
+                                        <button class="btn btn-danger btn-sm w-100" type="submit" name="action" value="delete">Delete</button>
                                     </form>
                                 {% endif %}
                             </div>

@@ -1,0 +1,58 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block admincontent %}
+
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container d-flex justify-content-center align-items-center m-2">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h3 class="text-center mb-4">Add Department</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="department_name" class="form-label">Department Name</label>
+                <input type="text" class="form-control" id="department_name" name="department_name" placeholder="Department Name" required>
+            </div>
+            <div class="mb-3">
+                <label for="hod" class="form-label">Head of the Department</label>
+                <input type="text" class="form-control" id="hod" name="hod" placeholder="Head of the Department Name" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
+            </div>
+            <div class="mb-3">
+                <label for="concerened_person" class="form-label">Concerened Person</label>
+                <input type="text" class="form-control" id="concerened_person" name="concerened_person" placeholder="Department Concerened Person" required>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="phone" name="phone" value="{{ phone_number }}" placeholder="Department Concerened Person Phone Number" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Enter password" required>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-100">Add Department</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}

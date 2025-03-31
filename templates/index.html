@@ -34,49 +34,40 @@
 
 
                 <div class="col-md-4">
-
-                    <div class="message-box border  overflow-hidden position-relative" id="messageContainer"
-                        style="height: 450px;">
-                        <div id="messageSlider">
+                    <div class="message-box border overflow-hidden position-relative" id="messageContainer" 
+                        style="height: 450px; overflow: hidden;">
+                        <div id="messageSlider" style="display: flex; flex-direction: column; transition: transform 1s ease-in-out;">
                             <!-- Vice Chancellor's Message -->
-                            <div class="message-item card p-3">
+                            <div class="message-item card p-3" style="height: 450px; flex: 0 0 auto;">
                                 <img src="{% static 'img/hvc_Alok-chakrawal.png' %}" class="rounded-circle mx-auto d-block mb-2"
                                     alt="Vice Chancellor">
                                 <h5 class="text-center">Prof. Alok Kumar Chakrawal</h5>
                                 <h6 class="text-center">Vice Chancellor</h6>
                                 <p class="text-justify">
-                                    <strong>Swavalambi Chhattisgarh</strong> is an initiative dedicated to promoting
-                                    self-reliance...
+                                    <strong>Swavalambi Chhattisgarh</strong> is an initiative dedicated to promoting self-reliance...
                                 </p>
-                                <!-- <a href="#" class="btn btn-sm btn-primary d-block mx-auto">Read More</a> -->
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#vcMessageModal">
-                                    Read More
-                                </button>
+                                    data-bs-target="#vcMessageModal">Read More</button>
                             </div>
                             <!-- Registrar's Message -->
-                            <div class="message-item card p-3">
+                            <div class="message-item card p-3" style="height: 450px; flex: 0 0 auto;">
                                 <img src="{% static 'img/Prof-A-S-Ranadive.jpeg' %}" class="rounded-circle mx-auto d-block mb-2"
                                     alt="Registrar">
-                                <h5 class="text-center">Prof. A.S.Ranadive </h5>
-                                <h5 class="text-center">Registrar</h5>
+                                <h5 class="text-center">Prof. A.S. Ranadive</h5>
+                                <h6 class="text-center">Registrar</h6>
                                 <p class="text-justify">"Ensuring seamless academic and administrative functions."</p>
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#registrarMessageModal">
-                                    Read More
-                                </button>
+                                    data-bs-target="#registrarMessageModal">Read More</button>
                             </div>
                             <!-- Coordinator's Message -->
-                            <div class="message-item card p-3">
+                            <div class="message-item card p-3" style="height: 450px; flex: 0 0 auto;">
                                 <img src="{% static 'img/ProfHariJha.jpeg' %}" class="rounded-circle mx-auto d-block mb-2"
                                     alt="Coordinator">
                                 <h5 class="text-center">Prof. Harit Jha</h5>
-                                <h5 class="text-center">Coordinator</h5>
+                                <h6 class="text-center">Coordinator</h6>
                                 <p class="text-justify">"Striving for student success and innovation."</p>
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#coordinatorMessageModal">
-                                    Read More
-                                </button>
+                                    data-bs-target="#coordinatorMessageModal">Read More</button>
                             </div>
                         </div>
                     </div>
@@ -93,7 +84,13 @@
                 <div class="ticker-heading"><i class="fas fa-bullhorn"></i> Latest News</div>
                 <div class="ticker">
                     {% for l in latest_news %}
-                        <div class="ticker__item"><a class="text-black" href="/media/{{l.file}}" target="_blank">{{l.name}}</a></div>
+                        <div class="ticker__item">
+                            {% if l.file %}
+                                <a class="text-black" href="/media/{{ l.file }}" target="_blank">{{ l.name }}</a>
+                            {% else %}
+                                <span class="text-black">{{ l.name }}</span>
+                            {% endif %}
+                        </div>
                     {% endfor %}
                     {% comment %} <div class="ticker__item">Online Application (VRET 2024-2025)</div>
                     <div class="ticker__item">Admission Notice for CUET PG 2025
@@ -233,54 +230,57 @@
         </section>
         <br>
 
-
         <section class="product-section" id="product" style="background-color: #f4f8fb;">
             <div class="text-center">
                 <h2 class="section-title p-3">Product List</h2>
             </div><br>
+        
+            {% if products %}
             <div id="carouselProductControls" class="carousel carousel-dark slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     {% for product in products %}
-                        {% if forloop.counter0|divisibleby:3 %}
+                        {% if forloop.counter0|divisibleby:3 %}  {# Start a new carousel-item for every 3 products #}
                         <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                            <div class="container">
-                                <div class="row justify-content-center mb-3">
+                            <div class="card-wrapper container-sm d-flex justify-content-center flex-wrap">
                         {% endif %}
-                                    <div class="col-lg-4 col-md-6 col-12">
-                                        <div class="card product-card shadow-lg">
-                                            <img src="{{ product.image.url }}" class="card-img-top" alt="Product Image">
-                                            <div class="card-body">
-                                                <h5 class="card-title">{{ product.name }}</h5>
-                                                <p class="card-text text-muted">
-                                                    {{ product.desc|default:"No description available."|slice:":30" }}{% if product.desc|length > 50 %}...{% endif %}
-                                                </p>
-                                                <div class="d-flex justify-content-between align-items-center">
-                                                    <span class="text-success fw-bold">${{ product.price }}</span>
-                                                    {% if product.qty > 0 %}
-                                                    <span class="badge bg-primary">In Stock</span>
-                                                    {% else %}
-                                                    <span class="badge bg-danger">Out of Stock</span>
-                                                    {% endif %}
-                                                </div>
-                                                {% if product.qty > 0 %}
-                                                <button type="button" class="btn btn-primary mt-3 w-100"
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#buyNowModal{{ product.id }}">
-                                                    <i class="fas fa-shopping-cart"></i> Buy Now
-                                                </button>
-                                                {% else %}
-                                                <button class="btn btn-secondary mt-3 w-100" disabled>Out of Stock</button>
-                                                {% endif %}
-                                            </div>
+        
+                                <div class="card product-card shadow-lg m-3">
+                                    <img src="{{ product.image }}" class="card-img-top" alt="Product Image">
+                                    <div class="card-body d-flex flex-column">
+                                        <h5 class="card-title">{{ product.name }}</h5>
+                                        <p class="card-text text-muted">
+                                            {{ product.desc|default:"No description available."|slice:":30" }}{% if product.desc|length > 50 %}...{% endif %}
+                                        </p>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span class="text-success fw-bold">${{ product.price }}</span>
+                                            {% if product.qty > 0 %}
+                                                <span class="badge bg-primary">In Stock</span>
+                                            {% else %}
+                                                <span class="badge bg-danger">Out of Stock</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="mt-auto">
+                                            {% if product.qty > 0 %}
+                                            <button type="button" class="btn btn-primary mt-3 w-100"
+                                                data-bs-toggle="modal" 
+                                                data-bs-target="#buyNowModal{{ product.id }}">
+                                                <i class="fas fa-shopping-cart"></i> Buy Now
+                                            </button>
+                                            {% else %}
+                                            <button class="btn btn-secondary mt-3 w-100" disabled>Out of Stock</button>
+                                            {% endif %}
                                         </div>
                                     </div>
-                        {% if forloop.counter|divisibleby:3 or forloop.last %}
                                 </div>
+        
+                        {% if forloop.counter|divisibleby:3 or forloop.last %}  {# Close carousel-item #}
                             </div>
                         </div>
                         {% endif %}
                     {% endfor %}
                 </div>
+        
+                <!-- Carousel Controls -->
                 <button class="carousel-control-prev" type="button" data-bs-target="#carouselProductControls" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
@@ -290,6 +290,12 @@
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
+        
+            {% else %}
+            <div class="text-center">
+                <h4 class="text-muted p-4">No Products Available</h4>
+            </div>
+            {% endif %}
         </section>
         
 
@@ -425,258 +431,72 @@
 
 
         <br>
-        <section class="product-section" id="Jobs">
+        <section class="job-section" id="Jobs" style="background-color: #f4f8fb;">
             <div class="text-center">
-                <h2 class="section-title">Find Your Dream Job Now</h2>
+                <h2 class="section-title p-3">Find Your Dream Job Now</h2>
             </div><br>
+            
+            {% if jobs %}
             <div id="carouselJobControls" class="carousel carousel-dark slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <div class="card-wrapper container-sm d-flex justify-content-center flex-wrap">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="card service-card shadow-lg">
-                                            <div class="card-body">
-                                                <h5 class="job-title">Software Engineer</h5>
-                                                <p class="company-name"><i class="fas fa-building"></i> ABC Tech Pvt Ltd
-                                                </p>
-
-                                                <p class="job-details"><i class="fas fa-user-graduate"></i> Min
-                                                    Qualification:
-                                                    B.Tech / MCA</p>
-                                                <p class="job-details"><i class="fas fa-briefcase"></i> Experience: 2+
-                                                    Years</p>
-                                                <p class="job-details"><i class="fas fa-map-marker-alt"></i> Location:
-                                                    Bangalore,
-                                                    India</p>
-
-                                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                                    <span class="salary"><i class="fas fa-dollar-sign"></i> ₹6-8
-                                                        LPA</span>
-                                                    <span class="badge bg-primary">Open</span>
-                                                </div>
-
-                                                <a href="#" class="apply-btn mt-3"><i class="fas fa-paper-plane"></i>
-                                                    Apply Now</a>
-                                            </div>
+                    {% for job in jobs %}
+                        {% if forloop.counter0|divisibleby:3 %}
+                        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                            <div class="card-wrapper container-sm d-flex justify-content-center flex-wrap">
+                        {% endif %}
+        
+                                <div class="card job-card shadow-lg m-3">
+                                    <div class="card-body">
+                                        <h5 class="job-title">{{ job.job_title }}</h5>
+                                        <p class="company-name"><i class="fas fa-building"></i> {{ job.company_name }}</p>
+        
+                                        <p class="job-details"><i class="fas fa-user-graduate"></i> Min Qualification: {{ job.job_min_qualification }}</p>
+                                        <p class="job-details"><i class="fas fa-briefcase"></i> Experience: {{ job.job_experience }}</p>
+                                        <p class="job-details"><i class="fas fa-map-marker-alt"></i> Location: {{ job.job_location }}</p>
+        
+                                        <div class="d-flex justify-content-between align-items-center mt-2">
+                                            <span class="salary"><i class="fas fa-dollar-sign"></i> {{ job.job_salary }}</span>
+                                            {% comment %} <span class="badge {% if job.is_approved %}bg-primary{% else %}bg-danger{% endif %}">
+                                                {% if job.is_approved %}Open{% else %}Closed{% endif %}
+                                            </span> {% endcomment %}
                                         </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="card service-card shadow-lg">
-                                            <div class="card-body">
-                                                <h5 class="job-title">Software Engineer</h5>
-                                                <p class="company-name"><i class="fas fa-building"></i> ABC Tech Pvt Ltd</p>
-
-                                                <p class="job-details"><i class="fas fa-user-graduate"></i> Min Qualification:
-                                                    B.Tech / MCA</p>
-                                                <p class="job-details"><i class="fas fa-briefcase"></i> Experience: 2+ Years</p>
-                                                <p class="job-details"><i class="fas fa-map-marker-alt"></i> Location: Bangalore,
-                                                    India</p>
-
-                                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                                    <span class="salary"><i class="fas fa-dollar-sign"></i> ₹6-8 LPA</span>
-                                                    <span class="badge bg-primary">Open</span>
-                                                </div>
-
-                                                <a href="#" class="apply-btn mt-3"><i class="fas fa-paper-plane"></i> Apply Now</a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="card service-card shadow-lg">
-                                            <div class="card-body">
-                                                <h5 class="job-title">Software Engineer</h5>
-                                                <p class="company-name"><i class="fas fa-building"></i> ABC Tech Pvt Ltd</p>
-
-                                                <p class="job-details"><i class="fas fa-user-graduate"></i> Min Qualification:
-                                                    B.Tech / MCA</p>
-                                                <p class="job-details"><i class="fas fa-briefcase"></i> Experience: 2+ Years</p>
-                                                <p class="job-details"><i class="fas fa-map-marker-alt"></i> Location: Bangalore,
-                                                    India</p>
-
-                                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                                    <span class="salary"><i class="fas fa-dollar-sign"></i> ₹6-8 LPA</span>
-                                                    <span class="badge bg-primary">Open</span>
-                                                </div>
-
-                                                <a href="#" class="apply-btn mt-3"><i class="fas fa-paper-plane"></i> Apply Now</a>
-                                            </div>
-                                        </div>
+        
+                                        <a href="{% url 'student_jobs' %}" class="apply-btn mt-3"><i class="fas fa-paper-plane"></i> Apply Now</a>
                                     </div>
                                 </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-
-
-                    <div class="carousel-item">
-                        <div class="card-wrapper container-sm d-flex   justify-content-around">
-                            <div class="container">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="card service-card shadow-lg">
-                                            <div class="card-body">
-                                                <h5 class="job-title">Software Engineer</h5>
-                                                <p class="company-name"><i class="fas fa-building"></i> ABC Tech Pvt Ltd
-                                                </p>
-
-                                                <p class="job-details"><i class="fas fa-user-graduate"></i> Min
-                                                    Qualification:
-                                                    B.Tech / MCA</p>
-                                                <p class="job-details"><i class="fas fa-briefcase"></i> Experience: 2+
-                                                    Years</p>
-                                                <p class="job-details"><i class="fas fa-map-marker-alt"></i> Location:
-                                                    Bangalore,
-                                                    India</p>
-
-                                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                                    <span class="salary"><i class="fas fa-dollar-sign"></i> ₹6-8
-                                                        LPA</span>
-                                                    <span class="badge bg-primary">Open</span>
-                                                </div>
-
-                                                <a href="#" class="apply-btn mt-3"><i class="fas fa-paper-plane"></i>
-                                                    Apply Now</a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="card service-card shadow-lg">
-                                            <div class="card-body">
-                                                <h5 class="job-title">Software Engineer</h5>
-                                                <p class="company-name"><i class="fas fa-building"></i> ABC Tech Pvt Ltd
-                                                </p>
-
-                                                <p class="job-details"><i class="fas fa-user-graduate"></i> Min
-                                                    Qualification:
-                                                    B.Tech / MCA</p>
-                                                <p class="job-details"><i class="fas fa-briefcase"></i> Experience: 2+
-                                                    Years</p>
-                                                <p class="job-details"><i class="fas fa-map-marker-alt"></i> Location:
-                                                    Bangalore,
-                                                    India</p>
-
-                                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                                    <span class="salary"><i class="fas fa-dollar-sign"></i> ₹6-8
-                                                        LPA</span>
-                                                    <span class="badge bg-primary">Open</span>
-                                                </div>
-
-                                                <a href="#" class="apply-btn mt-3"><i class="fas fa-paper-plane"></i>
-                                                    Apply Now</a>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="card service-card shadow-lg">
-                                            <div class="card-body">
-                                                <h5 class="job-title">Software Engineer</h5>
-                                                <p class="company-name"><i class="fas fa-building"></i> ABC Tech Pvt Ltd
-                                                </p>
-
-                                                <p class="job-details"><i class="fas fa-user-graduate"></i> Min
-                                                    Qualification:
-                                                    B.Tech / MCA</p>
-                                                <p class="job-details"><i class="fas fa-briefcase"></i> Experience: 2+
-                                                    Years</p>
-                                                <p class="job-details"><i class="fas fa-map-marker-alt"></i> Location:
-                                                    Bangalore,
-                                                    India</p>
-
-                                                <div class="d-flex justify-content-between align-items-center mt-2">
-                                                    <span class="salary"><i class="fas fa-dollar-sign"></i> ₹6-8
-                                                        LPA</span>
-                                                    <span class="badge bg-primary">Open</span>
-                                                </div>
-
-                                                <a href="#" class="apply-btn mt-3"><i class="fas fa-paper-plane"></i>
-                                                    Apply Now</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                    <!-- <div class="carousel-item">
-                    <div class="card-wrapper container-sm d-flex  justify-content-around">
-
-                        <div class="card product-card shadow-lg">
-                            <img src="https://source.unsplash.com/collection/190727/1600x900" class="card-img-top"
-                                alt="Product Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Product Name 1</h5>
-                                <p class="card-text text-muted">This is a great product that offers amazing features and
-                                    excellent value.</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-success fw-bold">$49.99</span>
-                                    <span class="badge bg-primary">In Stock</span>
-                                </div>
-                                <a href="#" class="btn btn-primary mt-3 w-100">Buy Now</a>
+        
+                        {% if forloop.counter|divisibleby:3 or forloop.last %}
                             </div>
                         </div>
-
-
-                        <div class="card product-card shadow-lg">
-                            <img src="https://source.unsplash.com/collection/190727/1600x900" class="card-img-top"
-                                alt="Product Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Product Name 2</h5>
-                                <p class="card-text text-muted">A sleek and reliable item designed for everyday use. Don't
-                                    miss this!</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-success fw-bold">$79.99</span>
-                                    <span class="badge bg-danger">Out of Stock</span>
-                                </div>
-                                <button class="btn btn-secondary mt-3 w-100" disabled>Out of Stock</button>
-                            </div>
-                        </div>
-
-                        <div class="card product-card shadow-lg">
-                            <img src="https://source.unsplash.com/collection/190727/1600x900" class="card-img-top"
-                                alt="Product Image">
-                            <div class="card-body">
-                                <h5 class="card-title">Product Name 3</h5>
-                                <p class="card-text text-muted">Experience the top-notch performance and style with this
-                                    premium product.</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="text-success fw-bold">$99.99</span>
-                                    <span class="badge bg-primary">In Stock</span>
-                                </div>
-                                <a href="#" class="btn btn-primary mt-3 w-100">Buy Now</a>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselJobControls"
-                        data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Previous</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselJobControls"
-                        data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Next</span>
-                    </button>
+                        {% endif %}
+                    {% endfor %}
                 </div>
+        
+                <!-- Carousel Controls -->
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselJobControls" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselJobControls" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
-
+            {% else %}
+            <div class="text-center">
+                <h4 class="text-muted p-4">No Jobs Available</h4>
+            </div>
+            {% endif %}
         </section>
+        
         <br>
         <br>
         <section class="product-section" id="Service" style="background-color: #f4f8fb;">
             <div class="text-center p-3">
                 <h2 class="section-title">Professional Services</h2>
-            </div><br>
+            </div>
         
+            {% if services %}
             <div id="carouselservicesControls" class="carousel carousel-dark slide" data-bs-ride="carousel">
                 <div class="carousel-inner">
                     {% for service in services %}
@@ -700,7 +520,6 @@
                                                     <div class="d-flex justify-content-between align-items-center mt-2">
                                                         <span class="badge bg-success">Available</span>
                                                     </div>
-                                                    <!-- Buy Now Button to Open Modal -->
                                                     <div class="mt-auto">
                                                         <button type="button" class="btn btn-primary w-100"
                                                             data-bs-toggle="modal" 
@@ -712,7 +531,7 @@
                                             </div>
                                         </div>
         
-                        {% if forloop.counter|divisibleby:3 or forloop.last %}  {# Close the row and carousel-item #}
+                        {% if forloop.counter|divisibleby:3 or forloop.last %}  {# Close row and carousel-item #}
                                     </div>
                                 </div>
                             </div>
@@ -733,7 +552,14 @@
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
+        
+            {% else %}
+            <div class="text-center p-4">
+                <h4 class="text-muted">No Services Available</h4>
+            </div>
+            {% endif %}
         </section>
+        
         {% comment %} <section class="product-section" id="Service" style="background-color: #f4f8fb;">
             <div class="text-center p-3">
                 <h2 class="section-title">Professional Services</h2>
@@ -1126,20 +952,23 @@
                             <!-- Request a Callback -->
                             <div class="border rounded p-3 mb-3">
                                 <h5>📩 Request a Callback:</h5>
-                                <form>
+                                <form method="POST" action="{% url 'request_callback' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                                
                                     <div class="mb-3">
-                                        <label for="name" class="form-label">Name:</label>
-                                        <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+                                        <label class="form-label">Name:</label>
+                                        <input type="text" class="form-control" name="name" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email:</label>
-                                        <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                                        <label class="form-label">Email:</label>
+                                        <input type="email" class="form-control" name="email" required>
                                     </div>
                                     <div class="mb-3">
-                                        <label for="mobile" class="form-label">Mobile Number:</label>
-                                        <input type="tel" class="form-control" id="mobile" placeholder="Enter your mobile number" required>
+                                        <label class="form-label">Mobile Number:</label>
+                                        <input type="tel" class="form-control" name="mobile" required>
                                     </div>
-                                    <button type="submit" class="btn btn-success w-100"><i class="fas fa-phone-alt"></i> Request a Callback</button>
+                                    <button type="submit" class="btn btn-success w-100">Request a Callback</button>
                                 </form>
                             </div>
 
@@ -1254,21 +1083,24 @@
                          <div class="border rounded p-3 mb-3">
                              <h5>📩 Request a Callback:</h5>
                              <p>Fill in your details, and our team will get back to you shortly.</p>
-                             <form>
-                                 <div class="mb-3">
-                                     <label for="name{{ service.id }}" class="form-label">Name:</label>
-                                     <input type="text" class="form-control" id="name{{ service.id }}" placeholder="Enter your name" required>
-                                 </div>
-                                 <div class="mb-3">
-                                     <label for="email{{ service.id }}" class="form-label">Email:</label>
-                                     <input type="email" class="form-control" id="email{{ service.id }}" placeholder="Enter your email" required>
-                                 </div>
-                                 <div class="mb-3">
-                                     <label for="mobile{{ service.id }}" class="form-label">Mobile Number:</label>
-                                     <input type="tel" class="form-control" id="mobile{{ service.id }}" placeholder="Enter your mobile number" required>
-                                 </div>
-                                 <button type="submit" class="btn btn-success w-100"><i class="fas fa-phone-alt"></i> Request a Callback</button>
-                             </form>
+                             <form method="POST" action="{% url 'request_callback' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="service_id" value="{{ service.id }}">
+                            
+                                <div class="mb-3">
+                                    <label class="form-label">Name:</label>
+                                    <input type="text" class="form-control" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Email:</label>
+                                    <input type="email" class="form-control" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Mobile Number:</label>
+                                    <input type="tel" class="form-control" name="mobile" required>
+                                </div>
+                                <button type="submit" class="btn btn-success w-100">Request a Callback</button>
+                            </form>
                          </div>
                      </div>
          

@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card text-white bg-success">
+            <div class="card text-white bg-warning">
                 <a href="{% url 'admin_jobs' %}" style="text-decoration: none;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Jobs</h5>
@@ -50,19 +50,23 @@
             </div>
         </div>
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card text-white bg-warning">
-                <div class="card-body">
-                    <h5 class="card-title">Orders</h5>
-                    <p class="card-text text-white">Track customer orders</p>
-                </div>
+            <div class="card text-white bg-danger">
+                <a href="{% url 'admin_requests' %}" style="text-decoration: none;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Orders</h5>
+                        <p class="card-text text-white">Track customer orders</p>
+                    </div>
+                </a>
             </div>
         </div>
         <div class="col-lg-3 col-md-6 mb-4">
-            <div class="card text-white bg-danger">
-                <div class="card-body">
-                    <h5 class="card-title">Reports</h5>
-                    <p class="card-text text-white">View analytics and reports</p>
-                </div>
+            <div class="card text-white bg-primary">
+                <a href="{% url 'job_students' %}" style="text-decoration: none;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Job Application</h5>
+                        <p class="card-text text-white">Track Job Applications</p>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
