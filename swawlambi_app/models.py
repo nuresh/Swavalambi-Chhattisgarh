@@ -221,3 +221,9 @@ class Notice(models.Model):
     class Meta:
         db_table = 'notices'
         verbose_name_plural = 'notices'
+
+class VisitorCounter(models.Model):
+    count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return self.count

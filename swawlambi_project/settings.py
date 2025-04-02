@@ -49,6 +49,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'swawlambi_app.middleware.VisitorMiddleware',  
 ]
 
 ROOT_URLCONF = 'swawlambi_project.urls'

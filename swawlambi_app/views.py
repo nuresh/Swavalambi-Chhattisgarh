@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice, CallbackRequest
+from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice, CallbackRequest, VisitorCounter
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
@@ -23,6 +23,8 @@ def index(request):
     recruiter_count = Recruiter.objects.count()
     product_count = Product.objects.count()
     service_count = Service.objects.count()
+    visitor = VisitorCounter.objects.first()
+    visitor_count = visitor.count if visitor else 0
 
     # Extract all required product details
     product_details = []
@@ -78,6 +80,7 @@ def index(request):
         'recruiter_count':recruiter_count,
         'product_count':product_count,
         'service_count':service_count,
+        'visitor_count': visitor_count, 
     }
 
     return render(request, 'index.html', context)
