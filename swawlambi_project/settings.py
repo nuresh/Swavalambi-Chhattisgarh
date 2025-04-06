@@ -28,6 +28,14 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1','82.29.167.64','https://swavalambichhattisgarh.in/','https://www.swavalambichhattisgarh.in/','swavalambichhattisgarh.in']
 
+CSRF_TRUSTED_ORIGINS = [
+    # "127.0.0.1",
+    # "82.29.167.64",
+    "https://swavalambichhattisgarh.in",
+    "https://www.swavalambichhattisgarh.in",
+    # "swavalambichhattisgarh.in",
+]
+
 
 # Application definition
 
@@ -145,9 +153,13 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # Default backend
 ]
 
+
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'nureshdewangan@gmail.com'
-EMAIL_HOST_PASSWORD = 'hemh zmqh drlg rrtp'
+EMAIL_HOST_USER = 'swavalambichhattisgarh@gmail.com'
+EMAIL_HOST_PASSWORD = 'kwee pxxg bmip ppki'

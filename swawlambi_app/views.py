@@ -11,6 +11,12 @@ from django.core.mail import send_mail
 from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+import re
+from django.conf import settings
+
+def is_strong_password(password):
+    return bool(re.match(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$', password))
 
 
 
@@ -119,8 +125,8 @@ def register(request):
     if request.method == 'POST':
         step = request.POST.get('step', 'registration')
 
+        # Step 1: User Registration
         if step == 'registration':
-            # Step 1: Handle registration details
             user_type = request.POST['user_type']
             email = request.POST['email']
             password = request.POST['password']
@@ -128,48 +134,58 @@ def register(request):
             name = request.POST['name']
             mobile = request.POST['mobile']
 
-            # Check if email already exists
+            # Check for existing user
             if User.objects.filter(email=email).exists():
                 messages.error(request, "An account with this email already exists.")
-                return render(request, 'register.html')
+                return render(request, 'register.html', {'step': 'registration'})
 
-            # Check if passwords match
+            # Password validation
             if password != confirm_password:
                 messages.error(request, "Passwords do not match.")
-                return render(request, 'register.html')
+                return render(request, 'register.html', {'step': 'registration'})
 
-            # Generate OTP
+            # Generate OTP and store it
             otp = random.randint(100000, 999999)
             otp_storage[email] = otp
 
-            # Send OTP via email
+            # Send OTP Email
             send_mail(
                 'Your OTP for Registration',
-                f'Your OTP is {otp}. Please enter this to complete your registration.',
-                'admin@example.com',
+                f"""
+                Dear User,
+
+                Thank you for registering on Swavalambi Chhattisgarh.
+
+                Your OTP is: {otp}
+
+                If you did not request this, please ignore this email.
+
+                Regards,  
+                Swavalambi Chhattisgarh Team
+                """,
+                'swavalambichhattisgarh@gmail.com',  # Must match EMAIL_HOST_USER
                 [email],
                 fail_silently=False,
             )
 
-            # Temporarily store registration details in session
+            # Store registration data in session
             request.session['registration_data'] = {
                 'user_type': user_type,
                 'email': email,
                 'password': password,
                 'name': name,
-                'mobile':mobile
+                'mobile': mobile
             }
 
-            messages.success(request, "OTP has been sent to your email.")
+            messages.success(request, "OTP has been sent to your email. Please check your inbox or spam folder.")
             return render(request, 'register.html', {'step': 'otp_verification', 'email': email})
 
+        # Step 2: OTP Verification
         elif step == 'otp_verification':
-            # Step 2: Handle OTP verification
             email = request.POST['email']
             entered_otp = request.POST['otp']
 
             if email in otp_storage and str(otp_storage[email]) == entered_otp:
-                # OTP is correct, create the user
                 registration_data = request.session.pop('registration_data', None)
 
                 if registration_data:
@@ -179,19 +195,16 @@ def register(request):
                         password=registration_data['password']
                     )
                     if registration_data['user_type'] == 'recruiter':
-                        user.is_active = False  
+                        user.is_active = False  # Require approval
                     user.save()
 
-                    # Create additional records based on user type
-                    user_type = registration_data['user_type']
                     name = registration_data['name']
                     mobile = registration_data['mobile']
 
-                    if user_type == 'student':
+                    # Create user profile based on type
+                    if registration_data['user_type'] == 'student':
                         Student.objects.create(user=user, name=name, phone_number=mobile)
-                    # elif user_type == 'department':
-                    #     Department.objects.create(user=user, department_name=name, phone_number=mobile)
-                    elif user_type == 'recruiter':
+                    elif registration_data['user_type'] == 'recruiter':
                         Recruiter.objects.create(user=user, name=name, company_phone_number=mobile)
 
                     messages.success(request, "Registration successful! Please login.")
@@ -200,6 +213,42 @@ def register(request):
                 messages.error(request, "Invalid OTP. Please try again.")
                 return render(request, 'register.html', {'step': 'otp_verification', 'email': email})
 
+        # Step 3: Resend OTP
+        elif step == 'resend_otp':
+            email = request.POST['email']
+            registration_data = request.session.get('registration_data', {})
+
+            if registration_data and registration_data.get('email') == email:
+                otp = random.randint(100000, 999999)
+                otp_storage[email] = otp
+
+                # Resend OTP email
+                send_mail(
+                    'Your OTP for Registration (Resent)',
+                    f"""
+                    Dear User,
+
+                    This is your new OTP for Swavalambi Chhattisgarh registration.
+
+                    Your OTP is: {otp}
+
+                    If you did not request this, please ignore this email.
+
+                    Regards,  
+                    Swavalambi Chhattisgarh Team
+                    """,
+                    'swavalambichhattisgarh@gmail.com',
+                    [email],
+                    fail_silently=False,
+                )
+
+                messages.success(request, "A new OTP has been sent to your email. Please check your inbox or spam folder.")
+                return render(request, 'register.html', {'step': 'otp_verification', 'email': email})
+            else:
+                messages.error(request, "Unable to resend OTP. Please start registration again.")
+                return redirect('register')
+
+    # Default: Load registration form
     return render(request, 'register.html', {'step': 'registration'})
 
 
@@ -210,7 +259,7 @@ def login_view(request):
         password = request.POST['password']
         
         user = authenticate(request, username=email, password=password)
-
+        print(user)
         if user is not None:
             login(request, user)
 
@@ -233,9 +282,8 @@ def login_view(request):
                     return render(request, 'login.html', {
                         'error': 'Your account is not active. Please contact the admin.',
                         'admin_contact': {
-                            'name': 'Admin Name',
-                            'email': 'admin@example.com',
-                            'phone': '+91 9876543210'
+                            'name': 'Vikas Sharma',
+                            'email': 'swavalambichhattisgarh@gmail.com'
                         }
                     })
             except User.DoesNotExist:
@@ -271,33 +319,14 @@ def admin_dashboard(request):
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
 def admin_profile(request):
-    # Ensure only recruiters can access this page
-    try:
-        recruiter = Recruiter.objects.get(user=request.user)
-    except Recruiter.DoesNotExist:
-        messages.error(request, "Profile not found.")
-        return redirect("login")  
+    # Check if the user is an admin (either staff user or custom admin model)
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')  # If not an admin, redirect to login  
+    
 
     if request.method == "POST":
         # Retrieve data from the POST request
-        hr_name = request.POST.get("hrname")
-        hr_mail = request.POST.get("hremail")
-        hr_mobile = request.POST.get("hrmobile")
-        address = request.POST.get("address")
-        gst = request.POST.get("gst")
-        industry_type = request.POST.get("industrytype")
-        company_phone_number = request.POST.get("companyphonenumber")
         password = request.POST.get("password")
-
-        # Update recruiter details
-        recruiter.hr_name = hr_name
-        recruiter.hr_mail = hr_mail
-        recruiter.hr_mobile = hr_mobile
-        recruiter.address = address
-        recruiter.gst = gst
-        recruiter.industry_type = industry_type
-        recruiter.company_phone_number = company_phone_number
-        recruiter.save()
 
         # If password is provided, update the user's password
         if password:
@@ -310,17 +339,9 @@ def admin_profile(request):
     # Render the template with recruiter details
     return render(
         request,
-        "recruiter_profile.html",
+        "admin_profile.html",
         {
-            "name": recruiter.name,
-            "email": recruiter.user.email,
-            "hr_name": recruiter.hr_name,
-            "hr_mail": recruiter.hr_mail,
-            "hr_mobile": recruiter.hr_mobile,
-            "address": recruiter.address,
-            "gst": recruiter.gst,
-            "industry_type": recruiter.industry_type,
-            "company_phone_number": recruiter.company_phone_number,
+            "email": request.user.email,
         },
     )
 
@@ -342,9 +363,8 @@ def admin_users(request):
         subject = ""
         message = ""
         admin_contact = {
-        'name': 'Admin Name',
-        'email': 'admin@example.com',
-        'phone': '+91 9876543210'
+        'name': 'Vikas Sharma',
+        'email': 'swavalambichhattisgarh@gmail.com',
         }
 
 
@@ -369,8 +389,8 @@ def admin_users(request):
                 Regards,
                 Admin Team
                 """
-            user.delete()  # Delete the user after sending the message
         elif action == 'delete':
+            user.delete()  # Delete the user after sending the message
             subject = "Account Deleted"
             message = f"""Dear {user.username},
 
@@ -383,8 +403,7 @@ def admin_users(request):
 
                 Regards,
                 Admin Team
-                """
-            user.delete()  # Delete the user after sending the message
+                """       
 
         # Send email notification if subject and message are set
         if subject and message:

@@ -252,7 +252,7 @@
                                             {{ product.desc|default:"No description available."|slice:":30" }}{% if product.desc|length > 50 %}...{% endif %}
                                         </p>
                                         <div class="d-flex justify-content-between align-items-center">
-                                            <span class="text-success fw-bold">${{ product.price }}</span>
+                                            <span class="text-success fw-bold">₹{{ product.price }}</span>
                                             {% if product.qty > 0 %}
                                                 <span class="badge bg-primary">In Stock</span>
                                             {% else %}

@@ -51,19 +51,28 @@
 
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Enter your password" required>
+                <input type="password" class="form-control" id="password" name="password"
+                    placeholder="Enter your password"
+                    required
+                    minlength="8"
+                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}"
+                    title="Password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character.">
             </div>
-
+            
             <div class="mb-3">
-                <label for="confirm-password" class="form-label">Confirm Password</label>
-                <input type="password" class="form-control" id="confirm-password" name="confirm_password" placeholder="Confirm your password" required>
+                <label for="confirm_password" class="form-label">Confirm Password</label>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password"
+                    placeholder="Confirm your password"
+                    required
+                    minlength="8"
+                    pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}"
+                    title="Password must match the above rules.">
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Register</button>
         </form>
 
         {% elif step == 'otp_verification' %}
-        <!-- OTP Verification Form -->
         <form method="POST">
             {% csrf_token %}
             <input type="hidden" name="step" value="otp_verification">
@@ -71,14 +80,25 @@
 
             <div class="mb-3">
                 <label for="otp" class="form-label">Enter OTP</label>
-                <input type="text" class="form-control" id="otp" name="otp" placeholder="Enter the OTP sent to your email" required>
+                <input type="text" class="form-control" id="otp" name="otp"
+                    placeholder="Enter the OTP sent to your email" required>
             </div>
 
             <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
         </form>
+
+        <!-- Resend OTP Form -->
+        <form method="POST" class="mt-2 text-center">
+            {% csrf_token %}
+            <input type="hidden" name="step" value="resend_otp">
+            <input type="hidden" name="email" value="{{ email }}">
+            <button type="submit" class="btn btn-link">Resend OTP</button>
+        </form>
+        <p class="text-muted text-center mt-2">Didn’t receive the OTP? Check your spam folder.</p>
         {% endif %}
     </div>
 </div>
+
 
 <script>
     function updateLabel() {
