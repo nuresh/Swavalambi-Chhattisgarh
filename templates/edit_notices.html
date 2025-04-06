@@ -1,0 +1,64 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block admincontent %}
+       
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container d-flex justify-content-center align-items-center m-3">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h3 class="text-center mb-4">Edit Notice</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="notice_id" value="{{ notice.id }}">
+
+            <div class="form-group mb-3">
+                <label for="type">Notice Type</label>
+                <select id="type" name="type" class="form-control" required>
+                    {% for t in notice_types %}
+                        <option value="{{ t.id }}" {% if t.id == notice.type.id %}selected{% endif %}>{{ t.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="name">Notice Name</label>
+                <input type="text" id="name" name="name" class="form-control" value="{{ notice.name }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="notice_date">Notice Date</label>
+                <input type="date" id="notice_date" name="notice_date" class="form-control" value="{{ notice.notice_date|date:'Y-m-d' }}" required>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="file">Notice File</label>
+                <input type="file" id="file" name="file" class="form-control">
+                {% if notice.file %}
+                    <small>Current File: <a href="{{ notice.file.url }}" target="_blank">View File</a></small>
+                {% endif %}
+            </div>
+
+            <div class="form-check mb-3">
+                <input type="checkbox" id="enabled" name="enabled" class="form-check-input" {% if notice.enabled %}checked{% endif %}>
+                <label class="form-check-label" for="enabled">Enabled</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+            <a href="{% url 'admin_notices' %}" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

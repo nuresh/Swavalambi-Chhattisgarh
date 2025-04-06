@@ -1,0 +1,78 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block admincontent %}
+
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container-fluid p-4">
+    <h1 class="mt-4">Welcome to the Admin Dashboard</h1>
+
+    <div>
+        <a href="{% url 'add_notices' %}" class="btn btn-primary">
+            Add Notice
+        </a>
+    </div>
+
+    <!-- List Page -->
+    <div class="mt-4">
+        <h2>Notices List</h2>
+        <table class="table table-striped table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th>#</th>
+                    <th>Notice Type</th>
+                    <th>Notice Name</th>
+                    <th>Notice Date</th>
+                    <th>Attachment</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for notice in notices %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ notice.type }}</td>
+                    <td>{{ notice.name}}</td>
+                    <td>{{ notice.notice_date}}</td>
+                    <td>{{ notice.file }}</td>
+                    <td>
+                        <div class="d-flex justify-content-center">
+                            <div class="w-50">
+                                <form method="GET" action="{% url 'edit_notices' %}" class="w-100 d-flex justify-content-between">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="notice_id" value="{{ notice.id }}">
+                                    <button class="btn btn-warning btn-sm w-100 me-1" type="submit" name="edit" value="edit">Edit</button>
+                                </form>
+                            </div>
+                            <div class="w-50">
+                                <form method="POST" action="{% url 'delete_notices' %}" class="w-100 d-flex justify-content-between">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="notice_id" value="{{ notice.id }}">
+                                    <button class="btn btn-danger btn-sm w-100" type="submit" name="delete" value="delete">Delete</button>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No notices found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

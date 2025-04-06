@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice, CallbackRequest, VisitorCounter, Admin_Details
+from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice, NoticeType, CallbackRequest, VisitorCounter, Admin_Details
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
@@ -680,9 +680,118 @@ def admin_notices(request,):
     if not (request.user.is_staff or hasattr(request.user, 'admin')):
         return redirect('login')  # If not an admin, redirect to login
 
-    applications = Applications.objects.filter().order_by('-id')
+    notices = Notice.objects.filter().order_by('-id')
 
-    return render(request, 'job_students.html', {'applications': applications})
+    return render(request, 'admin_notices.html', {'notices': notices})
+
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def add_notices(request):
+    # Check if the user is an admin (either staff user or custom admin model)
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')  # If not an admin, redirect to login
+
+    admin_user = request.user
+    
+    notice_types = NoticeType.objects.all()
+    
+    if request.method == 'POST':
+        type_id = request.POST.get('type')
+        name = request.POST.get('name')
+        notice_date = request.POST.get('notice_date')
+        enabled = request.POST.get('enabled') == 'on'
+        file = request.FILES.get('file')  # attachment
+
+        try:
+            notice_type = NoticeType.objects.get(id=type_id)
+            notice = Notice(
+                type=notice_type,
+                name=name,
+                notice_date=notice_date,
+                enabled=enabled,
+                file=file  # Django will call notice_file_upload_path()
+            )
+
+            notice.save()
+            messages.success(request, "Notice added successfully!")
+            return redirect('add_notices')
+        except NoticeType.DoesNotExist:
+            messages.error(request, "Invalid Notice Type selected.")
+            return render(request, 'add_notices.html', {'notice_types': notice_types})
+        
+    return render(request, 'add_notices.html', {'notice_types': notice_types})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def edit_notices(request):
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')
+
+    if request.method == 'POST':
+        notice_id = request.POST.get('notice_id')
+        try:
+            notice = Notice.objects.get(id=notice_id)
+        except Notice.DoesNotExist:
+            messages.error(request, "Notice not found.")
+            return redirect('admin_notices')
+
+        # Update fields
+        notice.name = request.POST.get('name')
+        notice.notice_date = request.POST.get('notice_date')
+        notice.enabled = 'enabled' in request.POST
+
+        type_id = request.POST.get('type')
+        try:
+            notice_type = NoticeType.objects.get(id=type_id)
+            notice.type = notice_type
+        except NoticeType.DoesNotExist:
+            messages.error(request, "Invalid notice type selected.")
+            return render(request, 'edit_notices.html', {'notice': notice, 'notice_types': NoticeType.objects.all()})
+
+        # Handle file upload
+        if 'file' in request.FILES:
+            uploaded_file = request.FILES['file']
+            try:
+                notice.file = uploaded_file  # Saved using model’s upload_to logic
+            except Exception as e:
+                messages.error(request, f"Error uploading file: {e}")
+                return render(request, 'edit_notices.html', {'notice': notice, 'notice_types': NoticeType.objects.all()})
+
+        notice.save()
+        messages.success(request, "Notice updated successfully!")
+        return redirect(f"{reverse('edit_notices')}?notice_id={notice.id}")
+
+    else:
+        notice_id = request.GET.get('notice_id')
+        try:
+            notice = Notice.objects.get(id=notice_id)
+        except Notice.DoesNotExist:
+            messages.error(request, "Notice not found.")
+            return redirect('admin_notices')
+
+        return render(request, 'edit_notices.html', {'notice': notice, 'notice_types': NoticeType.objects.all()})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def delete_notices(request):
+    # Check if the user is an admin (either staff user or custom admin model)
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')  # If not an admin, redirect to login
+
+    if request.method == 'POST':
+        notice_id = request.POST.get('notice_id')  # Ensure it comes from a form submission
+        try:
+            notice = Notice.objects.get(id=notice_id)
+        except Notice.DoesNotExist:
+            messages.error(request, "Notice not found.")
+            return redirect('admin_notices')
+
+        notice.delete()
+        messages.success(request, "Notice deleted successfully!")
+        return redirect('admin_notices')
+
+    return render(request, 'admin_notices.html')  # Optional fallback
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required

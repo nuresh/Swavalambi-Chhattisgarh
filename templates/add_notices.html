@@ -1,0 +1,68 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block admincontent %}
+       
+<!-- Message Block -->
+{% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+            <div class="alert 
+                {% if message.tags == 'success' %}alert-success{% elif message.tags == 'error' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% else %}alert-info{% endif %} 
+                alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<div class="container d-flex justify-content-center align-items-center m-3">
+    <div class="card shadow-lg p-4" style="width: 100%; max-width: 600px;">
+        <h3 class="text-center mb-4">Add Notice</h3>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Notice Type -->
+            <div class="mb-3">
+                <label for="type" class="form-label">Notice Type</label>
+                <select class="form-select" id="type" name="type" required>
+                    <option value="" disabled selected>Select Notice Type</option>
+                    {% for nt in notice_types %}
+                        <option value="{{ nt.id }}">{{ nt.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Notice Name -->
+            <div class="mb-3">
+                <label for="name" class="form-label">Notice Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Enter Notice name" required>
+            </div>
+
+            <!-- Notce date -->
+            <div class="mb-3">
+                <label for="notice_date" class="form-label">Notice Date</label>
+                <input type="date" class="form-control" id="notice_date" name="notice_date" placeholder="Enter quantity" required>
+            </div>
+
+            <!-- Attachment -->
+            <div class="mb-3">
+                <label for="file" class="form-label">Attachment</label>
+                <input type="file" class="form-control" id="file" name="file">
+            </div>
+
+            <!-- Enabled Checkbox -->
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="enabled" name="enabled" checked>
+                <label class="form-check-label" for="enabled">Enabled</label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary w-100">Add Notice</button>
+        </form>
+    </div>
+</div>
+
+
+{% endblock %}
