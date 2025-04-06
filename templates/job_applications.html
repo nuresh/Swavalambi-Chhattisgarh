@@ -84,14 +84,51 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p><strong>Student Name:</strong> {{ application.student.name }}</p>
-                                <p><strong>Phone:</strong> {{ application.student.mobile }}</p>
-                                <p><strong>Email:</strong> {{ application.student.user.email }}</p>
-                                <p><strong>Course:</strong> {{ application.student.course_name }}</p>
-                                <p><strong>Branch:</strong> {{ application.student.branch_name }}</p>
-                                <p><strong>Gender:</strong> {{ application.student.gender }}</p>
-                                <p><strong>Experience:</strong> {{ application.student.experience }}</p>
-                                <p><strong>Skills:</strong> {{ application.student.skills }}</p>
+                                <p><strong>Student Name:</strong> {{ application.student.name|default:"Not Provided" }}</p>
+                                <p><strong>Phone:</strong> {{ application.student.mobile|default:"Not Provided" }}</p>
+                                <p><strong>Email:</strong> {{ application.student.user.email|default:"Not Provided" }}</p>
+                                <p><strong>Course:</strong> {{ application.student.course_name|default:"Not Provided" }}</p>
+                                <p><strong>Branch:</strong> {{ application.student.branch_name|default:"Not Provided" }}</p>
+                                <p><strong>Semester:</strong> {{ application.student.semester|default:"Not Provided" }}</p>
+                                <p><strong>Enrollment No:</strong> {{ application.student.enrollment_number|default:"Not Provided" }}</p>
+                                <p><strong>Roll No:</strong> {{ application.student.roll_number|default:"Not Provided" }}</p>
+                                <p><strong>Gender:</strong> {{ application.student.gender|default:"Not Provided" }}</p>
+                                <p><strong>Date of Birth:</strong> {{ application.student.date_of_birth|date:"d-m-Y"|default:"Not Provided" }}</p>
+                                <p><strong>Course Starting Year:</strong> {{ application.student.course_starting_year|default:"Not Provided" }}</p>
+                                <p><strong>Course Ending Year:</strong> {{ application.student.course_ending_year|default:"Not Provided" }}</p>
+                                <p><strong>Profile Tagline:</strong> {{ application.student.profile_tagline|default:"Not Provided" }}</p>
+                                <p><strong>Profile Summary:</strong> {{ application.student.profile_summary|default:"Not Provided" }}</p>
+                                <p><strong>Experience:</strong> {{ application.student.experience|default:"Not Provided" }}</p>
+                                <p><strong>Skills:</strong> {{ application.student.skills|default:"Not Provided" }}</p>
+                                <p><strong>Resume:</strong> 
+                                    {% if application.student.resume %}
+                                        <a href="{{ application.student.resume }}" target="_blank">View Resume</a>
+                                    {% else %}
+                                        Not Provided
+                                    {% endif %}
+                                </p>
+                                <p><strong>LinkedIn:</strong> 
+                                    {% if application.student.linkedin %}
+                                        <a href="{{ application.student.linkedin }}" target="_blank">{{ application.student.linkedin }}</a>
+                                    {% else %}
+                                        Not Provided
+                                    {% endif %}
+                                </p>
+                                <p><strong>GitHub:</strong> 
+                                    {% if application.student.github %}
+                                        <a href="{{ application.student.github }}" target="_blank">{{ application.student.github }}</a>
+                                    {% else %}
+                                        Not Provided
+                                    {% endif %}
+                                </p>
+                                <p><strong>Website:</strong> 
+                                    {% if application.student.website %}
+                                        <a href="{{ application.student.website }}" target="_blank">{{ application.student.website }}</a>
+                                    {% else %}
+                                        Not Provided
+                                    {% endif %}
+                                </p>
+                                <p><strong>Phone Number:</strong> {{ application.student.phone_number|default:"Not Provided" }}</p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

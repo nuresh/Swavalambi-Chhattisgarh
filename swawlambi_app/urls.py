@@ -22,6 +22,7 @@ urlpatterns = [
     path('jobs/admin/', views.admin_jobs, name='admin_jobs'),
     path('all_requests/admin', views.admin_requests, name='admin_requests'),
     path('applied-jobs/admin/', views.job_students, name='job_students'),
+    path('notices/admin/', views.admin_notices, name='admin_notices'),
     path('profile/department/', views.department_profile, name='department_profile'),
     path('products/department/', views.department_products, name='department_products'),
     path('edit-products/department/', views.edit_products, name='edit_products'),

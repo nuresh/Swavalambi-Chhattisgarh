@@ -29,8 +29,16 @@
                         <input type="text" class="form-control" id="username" value="{{name}}">
                     </div> {% endcomment %}
                     <div class="mb-3">
-                        <label for="email" class="form-label">Email</label>
+                        <label for="name" class="form-label">Admin Name</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{admin_details.name}}" placeholder="Enter HR Name">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Admin Email</label>
                         <input type="email" class="form-control" id="email" name="email" value="{{ email }}" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mobile" class="form-label">Admin Phone Number</label>
+                        <input type="tel" class="form-control" id="mobile" name="mobile" value="{{ admin_details.mobile}}" placeholder="Enter HR Phone Number">
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">Password</label>

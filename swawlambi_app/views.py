@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.models import User
-from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice, CallbackRequest, VisitorCounter
+from .models import Student, Department, Recruiter, Product, Service, Job, Applications, Notice, CallbackRequest, VisitorCounter, Admin_Details
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth import logout
@@ -259,7 +259,10 @@ def login_view(request):
         password = request.POST['password']
         
         user = authenticate(request, username=email, password=password)
-        print(user)
+        admin_details = Admin_Details.objects.first()
+        print(admin_details.mobile)
+
+        # print(user)
         if user is not None:
             login(request, user)
 
@@ -282,8 +285,9 @@ def login_view(request):
                     return render(request, 'login.html', {
                         'error': 'Your account is not active. Please contact the admin.',
                         'admin_contact': {
-                            'name': 'Vikas Sharma',
-                            'email': 'swavalambichhattisgarh@gmail.com'
+                            'name': admin_details.name,
+                            'email': 'swavalambichhattisgarh@gmail.com',
+                            'mobile': admin_details.mobile
                         }
                     })
             except User.DoesNotExist:
@@ -323,15 +327,25 @@ def admin_profile(request):
     if not (request.user.is_staff or hasattr(request.user, 'admin')):
         return redirect('login')  # If not an admin, redirect to login  
     
+    admin_details = Admin_Details.objects.first()
 
     if request.method == "POST":
         # Retrieve data from the POST request
+        name = request.POST.get('name')
+        mail = request.POST.get('email')
+        mobile = request.POST.get('mobile')
         password = request.POST.get("password")
 
         # If password is provided, update the user's password
         if password:
             request.user.set_password(password)
             request.user.save()
+
+        if name:
+            admin_details.name = name
+        if mobile:
+            admin_details.mobile = mobile
+        admin_details.save()
 
         messages.success(request, "Profile updated successfully.")
         return redirect("admin_profile")
@@ -342,6 +356,7 @@ def admin_profile(request):
         "admin_profile.html",
         {
             "email": request.user.email,
+            "admin_details":admin_details,
         },
     )
 
@@ -650,6 +665,17 @@ def admin_requests(request,):
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
 def job_students(request,):
+    # Check if the user is an admin (either staff user or custom admin model)
+    if not (request.user.is_staff or hasattr(request.user, 'admin')):
+        return redirect('login')  # If not an admin, redirect to login
+
+    applications = Applications.objects.filter().order_by('-id')
+
+    return render(request, 'job_students.html', {'applications': applications})
+
+@cache_control(no_store=True, must_revalidate=True)
+@login_required
+def admin_notices(request,):
     # Check if the user is an admin (either staff user or custom admin model)
     if not (request.user.is_staff or hasattr(request.user, 'admin')):
         return redirect('login')  # If not an admin, redirect to login
@@ -1399,11 +1425,21 @@ def recruiter_dashboard(request):
         # Ensure the user is a department user
         recruiter = Recruiter.objects.get(user=request.user)
         print(f"Recruiter found: {recruiter.name}")
+
+        show_first_login_msg = False
+
+        if recruiter.first_login:
+            print("Hello")
+            show_first_login_msg = True
+            recruiter.first_login = False
+            recruiter.save()
+            
+
     except Recruiter.DoesNotExist:
         # If the user is not a department user, redirect to login or show an error
         return redirect('login')  # Or show a message saying "You are not a department"
-  
-    return render(request, 'recruiter_dashboard.html', {'recruiter': recruiter})
+    print(show_first_login_msg)
+    return render(request, 'recruiter_dashboard.html', {'recruiter': recruiter, 'show_first_login_msg':show_first_login_msg,})
 
 @cache_control(no_store=True, must_revalidate=True)
 @login_required
@@ -1559,6 +1595,7 @@ def add_jobs(request):
         exp = request.POST.get('exp')
         salary = request.POST.get('salary')
         skill = request.POST.get('skill')
+        min_qual = request.POST.get('min_qual')
         # post_date = request.POST.get('post_date')
         # email = request.POST.get('email')
         enabled = 'enabled' in request.POST  # Checkbox field
@@ -1573,6 +1610,7 @@ def add_jobs(request):
             job_experience=exp,
             job_salary=salary,
             job_skills=skill,
+            job_min_qualification=min_qual,
             job_posted_on=timezone.now().date(),
             # contact_email = email,
             enabled=enabled

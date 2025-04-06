@@ -21,8 +21,16 @@ def notice_file_upload_path(instance, filename):
 
 class Admin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    is_super_admin = models.BooleanField(default=False)  
-    
+    is_super_admin = models.BooleanField(default=False) 
+
+
+class Admin_Details(models.Model):
+    name = models.CharField(max_length=100)
+    mobile = models.IntegerField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
@@ -81,6 +89,7 @@ class Recruiter(models.Model):
     gst = models.CharField(max_length=15,null=True, blank=True)
     industry_type = models.CharField(max_length=40,null=True, blank=True)
     company_phone_number = models.IntegerField(null=True, blank=True)
+    first_login = models.BooleanField(default=True)
     
     def __str__(self):
         return self.name

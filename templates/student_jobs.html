@@ -93,7 +93,7 @@
                                 <div class="border rounded p-3 mb-3">
                                     <h5>📞 Contact Recruiter:</h5>
                                     <p>Name: <strong>{{ job.recruiter.hr_name }}</strong>
-                                    <p>Contact Number: <strong>{{ job.recruiter.hr_mobile }}</strong>
+                                    <p>Contact Number: <strong>{{ job.recruiter.hr_mobile | default:"" }}</strong>
                                     <p>Email: <strong>{{ job.recruiter.hr_mail }}</strong>
                                 </div>
 

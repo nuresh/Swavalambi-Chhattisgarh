@@ -2,7 +2,8 @@
 {% extends 'admin.html' %}
 {% load static %}
 {% block admincontent %}
-       
+
+
 
 <div class="container-fluid p-4">
     <h1 class="mt-4">Welcome to the Admin Dashboard</h1>
@@ -14,7 +15,7 @@
                 <a href="{% url 'admin_users' %}" style="text-decoration: none;">
                     <div class="card-body">
                         <h5 class="card-title text-white">Users</h5>
-                        <p class="card-text text-white">Manage user accounts</p>
+                        <p class="card-text text-white">View and Manage user accounts</p>
                     </div>
                 </a>
             </div>
@@ -65,6 +66,16 @@
                     <div class="card-body">
                         <h5 class="card-title text-white">Job Application</h5>
                         <p class="card-text text-white">Track Job Applications</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card text-white bg-success">
+                <a href="{% url 'admin_notices' %}" style="text-decoration: none;">
+                    <div class="card-body">
+                        <h5 class="card-title text-white">Notices</h5>
+                        <p class="card-text text-white">View and manage notices</p>
                     </div>
                 </a>
             </div>

@@ -44,7 +44,14 @@
             <!-- Type -->
             <div class="mb-3">
                 <label for="type" class="form-label">Job Type</label>
-                <input type="text" class="form-control" id="type" name="type" placeholder="Enter Job Type">
+                <select class="form-control" id="type" name="type">
+                    <option value="" selected disabled>Select Job Type</option>
+                    <option value="Full-Time">Full-Time</option>
+                    <option value="Part-Time">Part-Time</option>
+                    <option value="Internship">Internship</option>
+                    <option value="Freelance">Freelance</option>
+                    <option value="Apprenticeship">Apprenticeship</option>
+                </select>
             </div>
 
              <!-- Experience -->
@@ -63,6 +70,11 @@
              <div class="mb-3">
                 <label for="skill" class="form-label">Skills</label>
                 <input type="text" class="form-control" id="skill" name="skill" placeholder="Enter Skills Required">
+            </div>
+
+            <div class="mb-3">
+                <label for="min_qual" class="form-label">Minimum Qualification</label>
+                <input type="text" class="form-control" id="min_qual" name="min_qual" placeholder="Enter Minimum Qualification Required">
             </div>
 
             <!-- Job Potsed On -->

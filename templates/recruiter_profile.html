@@ -53,8 +53,41 @@
                         <input type="text" class="form-control" id="gst" name="gst" value="{{gst}}" placeholder="Enter GST Number">
                     </div>
                     <div class="mb-3">
-                        <label for="industrytype" class="form-label">Indystry Type</label>
-                        <input type="text" class="form-control" id="industrytype" name="industrytype" value="{{industry_type}}" placeholder="Enter Indystry Type">
+                        <label for="industrytype" class="form-label">Industry Type</label>
+                        <select class="form-select" id="industrytype" name="industrytype">
+                            <option value="">Select Industry Type</option>
+                            <option value="Agriculture & Farming" {% if industry_type == "Agriculture & Farming" %}selected{% endif %}>Agriculture & Farming</option>
+                            <option value="Aerospace & Defense" {% if industry_type == "Aerospace & Defense" %}selected{% endif %}>Aerospace & Defense</option>
+                            <option value="Arts, Design & Creative Media" {% if industry_type == "Arts, Design & Creative Media" %}selected{% endif %}>Arts, Design & Creative Media</option>
+                            <option value="Automobile & Transportation" {% if industry_type == "Automobile & Transportation" %}selected{% endif %}>Automobile & Transportation</option>
+                            <option value="Banking, Financial Services & Insurance (BFSI)" {% if industry_type == "Banking, Financial Services & Insurance (BFSI)" %}selected{% endif %}>Banking, Financial Services & Insurance (BFSI)</option>
+                            <option value="Beauty & Personal Care" {% if industry_type == "Beauty & Personal Care" %}selected{% endif %}>Beauty & Personal Care</option>
+                            <option value="Consulting & Business Services" {% if industry_type == "Consulting & Business Services" %}selected{% endif %}>Consulting & Business Services</option>
+                            <option value="Cybersecurity" {% if industry_type == "Cybersecurity" %}selected{% endif %}>Cybersecurity</option>
+                            <option value="Education & Training" {% if industry_type == "Education & Training" %}selected{% endif %}>Education & Training</option>
+                            <option value="Energy, Oil & Gas" {% if industry_type == "Energy, Oil & Gas" %}selected{% endif %}>Energy, Oil & Gas</option>
+                            <option value="Engineering & Construction" {% if industry_type == "Engineering & Construction" %}selected{% endif %}>Engineering & Construction</option>
+                            <option value="Environmental Services" {% if industry_type == "Environmental Services" %}selected{% endif %}>Environmental Services</option>
+                            <option value="Event Management" {% if industry_type == "Event Management" %}selected{% endif %}>Event Management</option>
+                            <option value="FMCG (Fast Moving Consumer Goods)" {% if industry_type == "FMCG (Fast Moving Consumer Goods)" %}selected{% endif %}>FMCG (Fast Moving Consumer Goods)</option>
+                            <option value="Food & Beverage" {% if industry_type == "Food & Beverage" %}selected{% endif %}>Food & Beverage</option>
+                            <option value="Government & Public Sector" {% if industry_type == "Government & Public Sector" %}selected{% endif %}>Government & Public Sector</option>
+                            <option value="Healthcare & Pharmaceuticals" {% if industry_type == "Healthcare & Pharmaceuticals" %}selected{% endif %}>Healthcare & Pharmaceuticals</option>
+                            <option value="Hospitality & Tourism" {% if industry_type == "Hospitality & Tourism" %}selected{% endif %}>Hospitality & Tourism</option>
+                            <option value="Information Technology (IT) & Software" {% if industry_type == "Information Technology (IT) & Software" %}selected{% endif %}>Information Technology (IT) & Software</option>
+                            <option value="Legal & Law Enforcement" {% if industry_type == "Legal & Law Enforcement" %}selected{% endif %}>Legal & Law Enforcement</option>
+                            <option value="Logistics & Supply Chain" {% if industry_type == "Logistics & Supply Chain" %}selected{% endif %}>Logistics & Supply Chain</option>
+                            <option value="Marketing, Advertising & PR" {% if industry_type == "Marketing, Advertising & PR" %}selected{% endif %}>Marketing, Advertising & PR</option>
+                            <option value="Media & Entertainment" {% if industry_type == "Media & Entertainment" %}selected{% endif %}>Media & Entertainment</option>
+                            <option value="Mining & Metals" {% if industry_type == "Mining & Metals" %}selected{% endif %}>Mining & Metals</option>
+                            <option value="Non-Profit & NGO" {% if industry_type == "Non-Profit & NGO" %}selected{% endif %}>Non-Profit & NGO</option>
+                            <option value="Real Estate & Property Management" {% if industry_type == "Real Estate & Property Management" %}selected{% endif %}>Real Estate & Property Management</option>
+                            <option value="Retail & E-commerce" {% if industry_type == "Retail & E-commerce" %}selected{% endif %}>Retail & E-commerce</option>
+                            <option value="Sports & Fitness" {% if industry_type == "Sports & Fitness" %}selected{% endif %}>Sports & Fitness</option>
+                            <option value="Telecommunication" {% if industry_type == "Telecommunication" %}selected{% endif %}>Telecommunication</option>
+                            <option value="Textiles & Apparel" {% if industry_type == "Textiles & Apparel" %}selected{% endif %}>Textiles & Apparel</option>
+                            <option value="Others" {% if industry_type == "Others" %}selected{% endif %}>Others</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="companyphonenumber" class="form-label">Industry Phone Number</label>

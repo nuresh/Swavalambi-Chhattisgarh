@@ -2,7 +2,14 @@
 {% extends 'recruiter.html' %}
 {% load static %}
 {% block recruitercontent %}
-       
+
+{% if show_first_login_msg %}
+<div style="background-color: #e0f7fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+    <strong>Please complete your profile details.</strong><br>
+    A well-filled profile helps recruiters find the right candidates.<br><br>
+    <a href="{% url 'recruiter_profile' %}" style="color: #00796b; font-weight: bold;">Update your profile now! 🚀</a>
+</div>
+{% endif %}
 
 <div class="container-fluid p-4">
     <h1 class="mt-4">Welcome to the Recruiter Dashboard</h1>
